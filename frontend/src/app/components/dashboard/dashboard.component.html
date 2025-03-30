@@ -1,0 +1,46 @@
+<div class="dashboard-container">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h1>Factores de Riesgo Psicosocial</h1>
+    </div>
+    <div class="navbar-user">
+      <span>Bienvenido, {{ currentUser?.nombre }}</span>
+      <button class="btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+  </nav>
+
+  <div class="dashboard-content">
+    <div class="welcome-section">
+      <h2>Panel de Control</h2>
+      <p>Bienvenido al sistema de evaluación de Factores de Riesgo Psicosocial</p>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="dashboard-card">
+        <i class="fas fa-clipboard-list"></i>
+        <h3>Evaluaciones</h3>
+        <p>Realiza nuevas evaluaciones o revisa las existentes</p>
+      </div>
+
+      <div class="dashboard-card">
+        <i class="fas fa-chart-bar"></i>
+        <h3>Reportes</h3>
+        <p>Visualiza estadísticas y reportes de las evaluaciones</p>
+      </div>
+
+      <div class="dashboard-card">
+        <i class="fas fa-users"></i>
+        <h3>Usuarios</h3>
+        <p>Gestiona usuarios y permisos del sistema</p>
+      </div>
+
+      <div class="dashboard-card">
+        <i class="fas fa-cog"></i>
+        <h3>Configuración</h3>
+        <p>Configura los parámetros del sistema</p>
+      </div>
+    </div>
+  </div>
+</div>
