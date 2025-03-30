@@ -3,7 +3,7 @@
   <h1 class="title">Factores de Riesgo Psicosocial</h1>
   <div class="form-container" [class.show-register]="isRegistering">
     <!-- Login Form -->
-    <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="form login-form">
+    <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="form login-form" [class.active]="!isRegistering">
       <div class="flex-column">
         <label>Correo electrónico</label>
       </div>
@@ -70,7 +70,7 @@
     </form>
 
     <!-- Register Form -->
-    <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="form register-form">
+    <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="form register-form" [class.active]="isRegistering">
       <div class="flex-column">
         <label>Nombre</label>
       </div>

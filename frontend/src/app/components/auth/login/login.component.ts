@@ -31,7 +31,7 @@ export class LoginComponent {
     });
 
     this.registerForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
@@ -61,8 +61,40 @@ export class LoginComponent {
 
   onRegisterSubmit(): void {
     if (this.registerForm.valid) {
-      console.log('Register form submitted', this.registerForm.value);
-      // Aquí iría la lógica de registro
+      this.authService.register(this.registerForm.value).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: '¡Registro exitoso!',
+            text: 'Tu cuenta ha sido creada correctamente'
+          }).then(() => {
+            // Pre-llenar el formulario de login con los datos del registro
+            this.loginForm.patchValue({
+              email: this.registerForm.value.email,
+              password: this.registerForm.value.password
+            });
+            // Limpiar el formulario de registro
+            this.registerForm.reset();
+            // Cambiar a la carta de login
+            this.isRegistering = false;
+            // Resetear la visibilidad de las contraseñas
+            this.showLoginPassword = false;
+            this.showRegisterPassword = false;
+          });
+        },
+        error: (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error en el registro',
+            text: error.error.message || 'Error al crear la cuenta'
+          });
+        }
+      });
+    } else {
+      Object.keys(this.registerForm.controls).forEach(key => {
+        const control = this.registerForm.get(key);
+        control?.markAsTouched();
+      });
     }
   }
 
@@ -75,7 +107,17 @@ export class LoginComponent {
   }
 
   toggleForm(): void {
+    if (!this.isRegistering) {
+      // Si vamos a cambiar a registro, limpiamos el formulario de registro
+      this.registerForm.reset();
+    } else {
+      // Si vamos a cambiar a login, limpiamos el formulario de login
+      this.loginForm.reset();
+    }
     this.isRegistering = !this.isRegistering;
+    // Resetear la visibilidad de las contraseñas
+    this.showLoginPassword = false;
+    this.showRegisterPassword = false;
   }
 
   getLoginEmailError(): string {
@@ -101,12 +143,12 @@ export class LoginComponent {
   }
 
   getRegisterNameError(): string {
-    const control = this.registerForm.get('name');
+    const control = this.registerForm.get('nombre');
     if (control?.hasError('required')) {
-      return 'Name is required';
+      return 'El nombre es requerido';
     }
     if (control?.hasError('minlength')) {
-      return 'Name must be at least 3 characters';
+      return 'El nombre debe tener al menos 3 caracteres';
     }
     return '';
   }
