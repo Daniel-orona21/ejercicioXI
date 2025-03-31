@@ -6,6 +6,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideClientHydration } from '@angular/platform-browser';
 import { authInterceptor } from './interceptors/auth.interceptor';
 import { CuestionarioService } from './services/cuestionario.service';
+import { PdfService } from './services/pdf.service';
 import { provideToastr } from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
-    CuestionarioService
+    CuestionarioService,
+    PdfService
   ]
 };

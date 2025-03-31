@@ -1,934 +1,980 @@
-// Variables
-$primary-color: #3a57e8;
-$secondary-color: #1e2a4a;
-$success-color: #28a745;
-$warning-color: #ffc107;
-$danger-color: #dc3545;
-$orange-color: #fd7e14;
-$dark-red: #721c24;
-$light-bg: #f8f9ff;
-$border-color: #e4e7ec;
-$text-primary: #1e2a4a;
-$text-secondary: #6c757d;
-$text-muted: #95aac9;
-$shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-$transition: all 0.3s ease;
-
-// Importar los módulos de Sass necesarios para usar las nuevas funciones
 @use "sass:color";
 
-// Mixins
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+// Variables
+$primary: #3a57e8;
+$secondary: #1e2a4a;
+$success: #28a745;
+$warning: #ffc107;
+$danger: #dc3545;
+$light: #f8f9fa;
+$dark: #343a40;
+$white: #ffffff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+$border-radius: 0.5rem;
+$card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+$transition: all 0.3s ease;
 
-@mixin flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+// Risk level colors
+$risk-bajo: $success;
+$risk-moderado: $warning;
+$risk-alto: $danger;
 
-@mixin card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: $shadow;
-  overflow: hidden;
-  transition: $transition;
-}
-
-// Estilos Generales
-.results-container {
-  padding: 2rem;
+.resultados-container {
+  padding: 1.5rem;
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   
-  .page-title {
-    color: $secondary-color;
-    margin-bottom: 2rem;
-    font-size: 2rem;
-    font-weight: 700;
-    border-bottom: 2px solid $primary-color;
-    padding-bottom: 0.5rem;
-  }
-}
-
-// Estilos para indicador de carga
-.loading-container {
-  @include flex-center;
-  flex-direction: column;
-  height: 400px;
-  
-  .loader {
-    width: 50px;
-    height: 50px;
-    border: 5px solid $light-bg;
-    border-top: 5px solid $primary-color;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-  
-  p {
-    margin-top: 1rem;
-    color: $text-secondary;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-}
-
-// Mensaje de error
-.error-message {
-  @include flex-center;
-  background-color: rgba($danger-color, 0.1);
-  border-radius: 0.5rem;
-  padding: 2rem;
-  color: $danger-color;
-  margin: 2rem 0;
-  
-  i {
-    font-size: 2rem;
-    margin-right: 1rem;
-  }
-  
-  p {
-    font-size: 1.1rem;
-  }
-}
-
-// Contenido de resultados
-.results-content {
-  animation: fadeIn 0.5s ease;
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-}
-
-// Tarjetas de resumen
-.summary-cards {
-  margin-bottom: 2rem;
-  
-  .row {
+  // Loading message
+  .loading-message {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .card {
-    @include card;
-    flex: 1;
-    min-width: 240px;
-    position: relative;
-    border: 2px solid $border-color;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
     
-    &.risk-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      
-      &:hover {
-        transform: translateY(-5px);
-        box-shadow: $shadow;
-      }
+    i {
+      font-size: 2rem;
+      color: $primary;
+      margin-bottom: 1rem;
     }
     
-    .card-header {
-      padding: 1rem;
-      background-color: $primary-color;
-      color: white;
-      
-      h2 {
-        margin: 0;
-        font-size: 1.2rem;
-        font-weight: 600;
-      }
-    }
-    
-    .card-content {
-      padding: 1.5rem;
-      text-align: center;
-      
-      .risk-level {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-      }
-      
-      .risk-score {
-        color: $text-secondary;
-        font-size: 1.1rem;
-        
-        .risk-range {
-          display: inline-block;
-          margin-left: 5px;
-          font-weight: 600;
-          font-style: italic;
-        }
-      }
+    span {
+      font-size: 1rem;
+      color: $gray-600;
     }
   }
-}
-
-// Sección de datos/gráficos
-.data-section {
-  @include card;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
   
-  .section-header {
-    @include flex-between;
-    margin-bottom: 1.5rem;
+  // Error message
+  .error-message {
+    background-color: rgba($danger, 0.1);
+    border-left: 4px solid $danger;
+    padding: 1rem;
+    border-radius: $border-radius;
+    display: flex;
+    align-items: center;
+    
+    i {
+      color: $danger;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+    
+    span {
+      color: $gray-800;
+    }
+  }
+  
+  // Empty message
+  .empty-message {
+    background-color: rgba($primary, 0.1);
+    border-left: 4px solid $primary;
+    padding: 1rem;
+    border-radius: $border-radius;
+    display: flex;
+    align-items: center;
+    
+    i {
+      color: $primary;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+    
+    span {
+      color: $gray-800;
+    }
+  }
+  
+  // Results dashboard
+  .results-dashboard {
+    h1, h2, h3 {
+      color: $secondary;
+      margin-bottom: 1.25rem;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid $gray-200;
+    }
     
     h2 {
-      color: $secondary-color;
       font-size: 1.5rem;
-      margin: 0;
+      font-weight: 600;
+      margin-top: 2rem;
     }
-  }
-  
-  .chart-container {
-    min-height: 300px;
-    position: relative;
     
-    .risk-chart {
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    // Notification Banner for users without completed evaluations
+    .notification-banner {
       display: flex;
-      height: 300px;
-      align-items: flex-end;
-      justify-content: space-around;
-      padding: 2rem 1rem;
+      background-color: $white;
+      border-radius: $border-radius;
+      box-shadow: $card-shadow;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-left: 4px solid $primary;
       
-      .chart-column {
+      .notification-icon {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 80px;
-        
-        .chart-label {
-          font-size: 0.9rem;
-          color: $text-secondary;
-          margin-bottom: 0.5rem;
-          text-align: center;
-        }
-        
-        .chart-bar-container {
-          height: 200px;
-          width: 60px;
-          background-color: $light-bg;
-          border-radius: 4px;
-          overflow: hidden;
-          position: relative;
-          
-          .chart-bar {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            transition: height 1s ease-in-out;
-            border-radius: 4px 4px 0 0;
-          }
-        }
-        
-        .chart-value {
-          margin-top: 0.5rem;
-          font-weight: 600;
-          color: $text-primary;
-        }
-      }
-    }
-  }
-}
-
-// Sección de recomendaciones
-.recommendations-section {
-  margin-bottom: 2rem;
-  
-  h2 {
-    color: $secondary-color;
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    border-left: 4px solid $primary-color;
-    padding-left: 1rem;
-  }
-  
-  .recommendation-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
-    
-    .recommendation-card {
-      @include card;
-      border: 2px solid $border-color;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.3s ease;
-      
-      &:hover {
-        transform: translateY(-5px);
-      }
-      
-      .card-header {
-        padding: 1rem;
-        background-color: $primary-color;
-        color: white;
-        @include flex-between;
-        
-        h3 {
-          margin: 0;
-          font-size: 1.1rem;
-          font-weight: 600;
-        }
-        
-        .risk-badge {
-          padding: 0.25rem 0.5rem;
-          background-color: rgba(255, 255, 255, 0.2);
-          border-radius: 4px;
-          font-size: 0.9rem;
-        }
-      }
-      
-      .card-body {
-        padding: 1.5rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        
-        .recommendations-list {
-          list-style-type: none;
-          padding-left: 0;
-          margin-bottom: 1.5rem;
-          flex-grow: 1;
-          
-          li {
-            padding: 0.5rem 0;
-            border-bottom: 1px dashed $border-color;
-            position: relative;
-            padding-left: 1.5rem;
-            
-            &:before {
-              content: "•";
-              color: $primary-color;
-              position: absolute;
-              left: 0;
-              font-size: 1.5rem;
-              line-height: 1;
-            }
-            
-            &:last-child {
-              border-bottom: none;
-            }
-          }
-        }
-        
-        .action-buttons {
-          display: flex;
-          gap: 1rem;
-          
-          .action-btn {
-            flex: 1;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            
-            i {
-              margin-right: 0.5rem;
-            }
-            
-            &.print-btn {
-              background-color: $light-bg;
-              color: $text-primary;
-              
-              &:hover {
-                background-color: color.scale($light-bg, $lightness: -5%);
-              }
-            }
-            
-            &.share-btn {
-              background-color: $primary-color;
-              color: white;
-              
-              &:hover {
-                background-color: color.scale($primary-color, $lightness: -10%);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-// Sección de medidas preventivas
-.preventive-section {
-  @include card;
-  margin-bottom: 2rem;
-  padding: 2rem;
-  
-  h2 {
-    color: $secondary-color;
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-  }
-  
-  .preventive-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2rem;
-    
-    .preventive-item {
-      text-align: center;
-      
-      .icon-container {
-        @include flex-center;
-        width: 80px;
-        height: 80px;
-        background-color: $light-bg;
-        border-radius: 50%;
-        margin: 0 auto 1rem;
+        align-items: flex-start;
+        padding-top: 0.5rem;
+        margin-right: 1.5rem;
         
         i {
-          font-size: 2rem;
-          color: $primary-color;
+          font-size: 2.5rem;
+          color: $primary;
         }
       }
       
-      h3 {
-        color: $text-primary;
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-      }
-      
-      p {
-        color: $text-secondary;
-        line-height: 1.5;
-      }
-    }
-  }
-}
-
-// Sección de normatividad
-.normative-section {
-  @include card;
-  padding: 2rem;
-  background-color: $light-bg;
-  border-left: 4px solid $primary-color;
-  
-  h2 {
-    color: $secondary-color;
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-  }
-  
-  .normative-content {
-    p {
-      text-align: center;
-      margin-bottom: 2rem;
-      line-height: 1.6;
-    }
-    
-    .normative-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1.5rem;
-      
-      .normative-item {
-        background-color: white;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
+      .notification-content {
+        flex: 1;
         
-        h4 {
-          color: $primary-color;
-          margin-bottom: 0.5rem;
-          font-size: 1.1rem;
+        h2 {
+          color: $secondary;
+          margin-top: 0;
+          margin-bottom: 0.75rem;
+          font-size: 1.3rem;
           font-weight: 600;
         }
         
         p {
-          margin: 0;
-          color: $text-secondary;
-          text-align: left;
-          font-size: 0.95rem;
-        }
-      }
-    }
-  }
-}
-
-// Estilos para el estado vacío (empty state)
-.empty-state {
-  @include flex-center;
-  flex-direction: column;
-  padding: 4rem 2rem;
-  text-align: center;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: $shadow;
-  margin: 2rem 0;
-  
-  .empty-icon {
-    @include flex-center;
-    width: 100px;
-    height: 100px;
-    background-color: $light-bg;
-    border-radius: 50%;
-    margin-bottom: 1.5rem;
-    
-    i {
-      font-size: 3rem;
-      color: $primary-color;
-      opacity: 0.7;
-    }
-  }
-  
-  h2 {
-    color: $secondary-color;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  p {
-    color: $text-secondary;
-    max-width: 500px;
-    margin-bottom: 2rem;
-    line-height: 1.6;
-  }
-  
-  .action-button {
-    padding: 0.75rem 1.5rem;
-    background-color: $primary-color;
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: $transition;
-    
-    i {
-      margin-right: 0.5rem;
-    }
-    
-    &:hover {
-      background-color: color.scale($primary-color, $lightness: -10%);
-      transform: translateY(-2px);
-    }
-  }
-}
-
-// Sección de datos globales
-.global-data-section {
-  margin-top: 3rem;
-  margin-bottom: 2rem;
-  animation: fadeIn 0.5s ease;
-  
-  h2 {
-    color: $secondary-color;
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-    text-align: center;
-    position: relative;
-    
-    &::after {
-      content: '';
-      display: block;
-      width: 80px;
-      height: 4px;
-      background-color: $primary-color;
-      margin: 0.5rem auto 0;
-      border-radius: 2px;
-    }
-  }
-  
-  // Tarjetas de estadísticas generales
-  .global-stats {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
-    
-    .stat-card {
-      @include card;
-      padding: 1.5rem;
-      flex: 0 1 250px;
-      text-align: center;
-      transition: transform 0.3s ease;
-      
-      &:hover {
-        transform: translateY(-5px);
-      }
-      
-      .stat-icon {
-        width: 60px;
-        height: 60px;
-        background-color: rgba($primary-color, 0.1);
-        border-radius: 50%;
-        margin: 0 auto 1rem;
-        @include flex-center;
-        
-        i {
-          font-size: 1.8rem;
-          color: $primary-color;
-        }
-      }
-      
-      .stat-value {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: $text-primary;
-        margin-bottom: 0.5rem;
-      }
-      
-      .stat-label {
-        font-size: 1rem;
-        color: $text-secondary;
-        font-weight: 500;
-      }
-    }
-  }
-  
-  // Tablas de datos
-  .data-tables {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
-    
-    .data-table {
-      @include card;
-      padding: 1.5rem;
-      flex: 1;
-      min-width: 300px;
-      
-      h3 {
-        color: $secondary-color;
-        font-size: 1.4rem;
-        margin-bottom: 1.5rem;
-        border-bottom: 2px solid $border-color;
-        padding-bottom: 0.5rem;
-      }
-      
-      .data-description {
-        color: $text-secondary;
-        margin-bottom: 1.5rem;
-        font-style: italic;
-        font-size: 0.9rem;
-      }
-      
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 1.5rem;
-        
-        th, td {
-          padding: 0.75rem;
-          text-align: left;
+          color: $gray-700;
+          margin-bottom: 1.25rem;
+          line-height: 1.5;
         }
         
-        th {
-          background-color: $light-bg;
-          color: $secondary-color;
-          font-weight: 600;
-        }
-        
-        td {
-          border-top: 1px solid $border-color;
-          
-          .risk-dot {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-          }
-        }
-      }
-      
-      // Gráfico de barras horizontales para distribución
-      .risk-distribution-chart {
-        margin-top: 1.5rem;
-        
-        .distribution-bar {
-          height: 45px;
-          margin-bottom: 15px;
-          border-radius: 4px;
-          color: white;
-          display: flex;
+        .cta-button {
+          display: inline-flex;
           align-items: center;
-          padding: 0 10px;
+          background-color: $primary;
+          color: $white;
+          border: none;
+          padding: 0.75rem 1.5rem;
+          border-radius: $border-radius;
           font-weight: 500;
-          transition: width 1s ease-in-out;
-          font-size: 1rem;
-          min-width: 60px;
-          box-sizing: border-box;
-          
-          &:last-child {
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
-  }
-  
-  // Análisis por departamento
-  .department-analysis {
-    @include card;
-    padding: 1.5rem;
-    margin-bottom: 2.5rem;
-    
-    h3 {
-      color: $secondary-color;
-      font-size: 1.4rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 2px solid $border-color;
-      padding-bottom: 0.5rem;
-    }
-    
-    .department-chart {
-      .department-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-        
-        &:last-child {
-          margin-bottom: 0;
-        }
-        
-        .department-name {
-          width: 150px;
-          font-weight: 500;
-          color: $text-primary;
-          padding-right: 1rem;
-        }
-        
-        .department-bar-container {
-          flex: 1;
-          height: 25px;
-          background-color: $light-bg;
-          border-radius: 4px;
-          position: relative;
-          margin: 0 1rem;
-          
-          .department-bar {
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            border-radius: 4px;
-            transition: width 1s ease-in-out;
-          }
-          
-          .department-value {
-            position: absolute;
-            right: -35px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-weight: 600;
-            color: $text-primary;
-          }
-        }
-        
-        .department-risk {
-          width: 100px;
-          text-align: right;
-          font-weight: 500;
-          color: $text-secondary;
-        }
-      }
-    }
-  }
-  
-  // Preguntas críticas
-  .critical-questions {
-    @include card;
-    padding: 1.5rem;
-    margin-bottom: 2.5rem;
-    
-    h3 {
-      color: $secondary-color;
-      font-size: 1.4rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 2px solid $border-color;
-      padding-bottom: 0.5rem;
-    }
-    
-    .critical-questions-list {
-      .critical-question-item {
-        background-color: rgba($warning-color, 0.1);
-        border-left: 4px solid $warning-color;
-        padding: 1rem;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-        
-        &:last-child {
-          margin-bottom: 0;
-        }
-        
-        .question-text {
-          font-weight: 500;
-          margin-bottom: 0.5rem;
-          color: $text-primary;
+          cursor: pointer;
+          transition: $transition;
+          box-shadow: 0 2px 6px rgba($primary, 0.3);
           
           i {
-            color: $warning-color;
-            margin-right: 8px;
-          }
-        }
-        
-        .question-stats {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-          font-size: 0.9rem;
-          
-          .positive-responses {
-            color: $danger-color;
-            background-color: rgba($danger-color, 0.1);
-            padding: 0.25rem 0.5rem;
-            border-radius: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
           }
           
-          .negative-responses {
-            color: $danger-color;
-            background-color: rgba($danger-color, 0.1);
-            padding: 0.25rem 0.5rem;
-            border-radius: 20px;
+          &:hover {
+            background-color: darken($primary, 10%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba($primary, 0.4);
           }
           
-          .question-category {
-            color: $text-secondary;
-            background-color: $light-bg;
-            padding: 0.25rem 0.5rem;
-            border-radius: 20px;
+          &:active {
+            transform: translateY(0);
           }
         }
       }
     }
-  }
-  
-  // Tendencias temporales
-  .temporal-trends {
-    @include card;
-    padding: 1.5rem;
-    margin-bottom: 2.5rem;
     
-    h3 {
-      color: $secondary-color;
-      font-size: 1.4rem;
+    .report-header {
       margin-bottom: 1.5rem;
-      border-bottom: 2px solid $border-color;
-      padding-bottom: 0.5rem;
+      text-align: center;
+      
+      h1 {
+        border-bottom: none;
+      }
     }
     
-    .trend-chart {
-      height: 300px;
-      position: relative;
-      padding-bottom: 40px;
+    // Risk cards
+    .risk-cards-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
       
-      .chart-labels {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        justify-content: space-around;
+      .risk-card {
+        flex: 1;
+        min-width: 300px;
+        max-width: 400px;
+        border-radius: $border-radius;
+        overflow: hidden;
+        box-shadow: $card-shadow;
+        transition: $transition;
         
-        .chart-month-label {
-          font-size: 0.9rem;
-          color: $text-secondary;
-          text-align: center;
-          padding: 0.5rem 0;
+        &:hover {
+          transform: translateY(-5px);
         }
-      }
-      
-      .chart-bars {
-        display: flex;
-        height: calc(100% - 40px);
-        align-items: flex-end;
-        justify-content: space-around;
         
-        .trend-bar-container {
-          width: 60px;
-          height: 100%;
-          display: flex;
-          align-items: flex-end;
-          justify-content: center;
+        &.bajo {
+          border: 1px solid $risk-bajo;
           
-          .trend-bar {
-            width: 40px;
-            transition: height 1s ease-in-out;
-            border-radius: 4px 4px 0 0;
-            position: relative;
+          .card-header {
+            background-color: $risk-bajo;
+          }
+          
+          .risk-level {
+            color: $risk-bajo;
+          }
+        }
+        
+        &.moderado {
+          border: 1px solid $risk-moderado;
+          
+          .card-header {
+            background-color: $risk-moderado;
+          }
+          
+          .risk-level {
+            color: $risk-moderado;
+          }
+        }
+        
+        &.alto {
+          border: 1px solid $risk-alto;
+          
+          .card-header {
+            background-color: $risk-alto;
+          }
+          
+          .risk-level {
+            color: $risk-alto;
+          }
+        }
+        
+        .card-header {
+          padding: 1rem 1.5rem;
+          
+          h2 {
+            color: $white;
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+          }
+        }
+        
+        .card-body {
+          padding: 1.5rem;
+          background-color: $white;
+          
+          .risk-level {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+          }
+          
+          .risk-score {
+            text-align: center;
+            color: $gray-700;
+            font-size: 1rem;
             
-            .trend-value {
-              position: absolute;
-              top: -25px;
-              left: 50%;
-              transform: translateX(-50%);
-              font-weight: 600;
-              font-size: 0.9rem;
-              color: $text-primary;
+            .risk-range {
+              font-size: 0.875rem;
+              color: $gray-600;
+              margin-left: 0.25rem;
             }
           }
         }
       }
     }
-  }
-  
-  // Recomendaciones globales
-  .global-recommendations {
-    @include card;
-    padding: 1.5rem;
     
-    h3 {
-      color: $secondary-color;
-      font-size: 1.4rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 2px solid $border-color;
-      padding-bottom: 0.5rem;
+    // Analysis section
+    .analysis-section {
+      padding: 2rem;
+      background-color: $white;
+      border-radius: $border-radius;
+      box-shadow: $card-shadow;
+      margin-bottom: 2.5rem;
+      
+      .chart-container {
+        margin-top: 1.5rem;
+        
+        .risk-bar-chart {
+          display: flex;
+          justify-content: space-around;
+          align-items: flex-end;
+          height: 300px;
+          padding: 0 1rem;
+          
+          .chart-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+            max-width: 120px;
+            flex: 1;
+            
+            .bar-label {
+              color: $gray-700;
+              font-weight: 500;
+              margin-bottom: 0.75rem;
+            }
+            
+            .bar-container {
+              width: 100%;
+              height: 240px;
+              display: flex;
+              justify-content: center;
+              align-items: flex-end;
+              
+              .bar {
+                width: 40px;
+                min-height: 30px;
+                border-radius: 4px 4px 0 0;
+                position: relative;
+                
+                &.bajo {
+                  background-color: $risk-bajo;
+                }
+                
+                &.moderado {
+                  background-color: $risk-moderado;
+                }
+                
+                &.alto {
+                  background-color: $risk-alto;
+                }
+                
+                .bar-value {
+                  position: absolute;
+                  top: -25px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  color: $gray-700;
+                  font-weight: 600;
+                }
+              }
+            }
+          }
+        }
+      }
     }
     
-    .recommendations-list {
-      .global-risk-level {
+    // Recommendations section
+    .recommendations-section {
+      margin-bottom: 2.5rem;
+      
+      .recommendations-cards {
         display: flex;
-        align-items: center;
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1.5rem;
         
-        .risk-indicator {
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          margin-right: 10px;
+        .recommendation-card {
+          flex: 1;
+          min-width: 300px;
+          border-radius: $border-radius;
+          overflow: hidden;
+          box-shadow: $card-shadow;
+          
+          &.bajo {
+            border-top: 4px solid $risk-bajo;
+            
+            .card-header {
+              background-color: rgba($risk-bajo, 0.1);
+              
+              .risk-badge {
+                background-color: $risk-bajo;
+              }
+            }
+          }
+          
+          &.moderado {
+            border-top: 4px solid $risk-moderado;
+            
+            .card-header {
+              background-color: rgba($risk-moderado, 0.1);
+              
+              .risk-badge {
+                background-color: $risk-moderado;
+              }
+            }
+          }
+          
+          &.alto {
+            border-top: 4px solid $risk-alto;
+            
+            .card-header {
+              background-color: rgba($risk-alto, 0.1);
+              
+              .risk-badge {
+                background-color: $risk-alto;
+              }
+            }
+          }
+          
+          .card-header {
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+            h3 {
+              margin: 0;
+              font-size: 1.1rem;
+              font-weight: 600;
+              color: $gray-800;
+            }
+            
+            .risk-badge {
+              padding: 0.25rem 0.75rem;
+              border-radius: 1rem;
+              font-size: 0.875rem;
+              font-weight: 600;
+              color: $white;
+            }
+          }
+          
+          .card-body {
+            padding: 1.5rem;
+            background-color: $white;
+            
+            .recommendations-list {
+              margin: 0 0 1.5rem 0;
+              padding-left: 1.5rem;
+              
+              li {
+                margin-bottom: 0.75rem;
+                color: $gray-700;
+                line-height: 1.5;
+                
+                &:last-child {
+                  margin-bottom: 0;
+                }
+              }
+            }
+            
+            .card-actions {
+              display: flex;
+              gap: 1rem;
+              margin-top: 1.5rem;
+              
+              .download-btn {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                background-color: $primary;
+                color: $white;
+                border: none;
+                border-radius: $border-radius;
+                font-weight: 500;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: $transition;
+                
+                i {
+                  margin-right: 0.75rem;
+                }
+                
+                &:hover {
+                  background-color: darken($primary, 5%);
+                  transform: translateY(-2px);
+                  box-shadow: 0 4px 8px rgba($primary, 0.3);
+                }
+                
+                &:active {
+                  transform: translateY(0);
+                }
+              }
+              
+              .dropdown-container {
+                position: relative;
+                width: 100%;
+                
+                .download-btn {
+                  width: 100%;
+                  padding: 0.75rem 1rem;
+                  background-color: $primary;
+                  color: $white;
+                  border: none;
+                  border-radius: $border-radius;
+                  font-weight: 500;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  transition: $transition;
+                  
+                  i:first-child {
+                    margin-right: 0.5rem;
+                  }
+                  
+                  i:last-child {
+                    font-size: 0.8rem;
+                    margin-left: 0.5rem;
+                  }
+                  
+                  &:hover {
+                    background-color: darken($primary, 5%);
+                  }
+                  
+                  &:hover + .dropdown-menu,
+                  & + .dropdown-menu:hover {
+                    opacity: 1;
+                    transform: translateY(0);
+                    pointer-events: auto;
+                  }
+                }
+                
+                .dropdown-menu {
+                  position: absolute;
+                  top: 100%;
+                  left: 0;
+                  width: 100%;
+                  background-color: $white;
+                  border-radius: $border-radius;
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                  margin-top: 0.5rem;
+                  opacity: 0;
+                  transform: translateY(-10px);
+                  transition: all 0.2s ease-in-out;
+                  pointer-events: none;
+                  z-index: 10;
+                  
+                  .dropdown-item {
+                    display: flex;
+                    align-items: center;
+                    padding: 0.75rem 1rem;
+                    color: $gray-700;
+                    font-size: 0.9rem;
+                    cursor: pointer;
+                    transition: background-color 0.2s;
+                    
+                    i {
+                      color: $primary;
+                      margin-right: 0.75rem;
+                      width: 16px;
+                      text-align: center;
+                    }
+                    
+                    &:first-child {
+                      border-radius: $border-radius $border-radius 0 0;
+                    }
+                    
+                    &:last-child {
+                      border-radius: 0 0 $border-radius $border-radius;
+                    }
+                    
+                    &:hover {
+                      background-color: $gray-100;
+                      color: $primary;
+                    }
+                  }
+                }
+              }
+              
+              .action-btn {
+                padding: 0.5rem 1rem;
+                border-radius: $border-radius;
+                border: none;
+                font-size: 0.875rem;
+                font-weight: 500;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                
+                i {
+                  margin-right: 0.5rem;
+                }
+                
+                &.print {
+                  background-color: $light;
+                  color: $gray-700;
+                  
+                  &:hover {
+                    background-color: $gray-200;
+                  }
+                }
+                
+                &.share {
+                  background-color: $primary;
+                  color: $white;
+                  
+                  &:hover {
+                    background-color: darken($primary, 5%);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Global stats section
+    .global-stats-section {
+      margin-bottom: 2.5rem;
+      
+      .stat-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        
+        .stat-card {
+          flex: 1;
+          min-width: 200px;
+          display: flex;
+          align-items: center;
+          background-color: $white;
+          padding: 1.5rem;
+          border-radius: $border-radius;
+          box-shadow: $card-shadow;
+          
+          .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba($primary, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            
+            i {
+              font-size: 1.5rem;
+              color: $primary;
+            }
+          }
+          
+          .stat-data {
+            .stat-value {
+              font-size: 2rem;
+              font-weight: 700;
+              color: $secondary;
+              line-height: 1.2;
+            }
+            
+            .stat-label {
+              font-size: 0.875rem;
+              color: $gray-600;
+            }
+          }
         }
       }
       
-      .global-recommendations-list {
-        padding-left: 1.5rem;
+      .data-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
         
-        li {
-          margin-bottom: 1rem;
-          line-height: 1.5;
-          position: relative;
-          padding-left: 5px;
+        .data-card {
+          flex: 1;
+          min-width: 400px;
+          background-color: $white;
+          border-radius: $border-radius;
+          box-shadow: $card-shadow;
+          padding: 1.5rem;
           
-          &::marker {
-            color: $primary-color;
-            font-weight: 600;
+          h3 {
+            margin-top: 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid $gray-200;
           }
           
-          &:last-child {
-            margin-bottom: 0;
+          .data-description {
+            color: $gray-600;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+          }
+          
+          // Risk distribution table
+          .risk-distribution-table {
+            margin-bottom: 1.5rem;
+            
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              
+              th, td {
+                padding: 0.75rem 1rem;
+                text-align: left;
+              }
+              
+              th {
+                background-color: $gray-100;
+                font-weight: 600;
+                color: $gray-700;
+              }
+              
+              tr {
+                &.bajo td:first-child {
+                  color: $risk-bajo;
+                  font-weight: 500;
+                }
+                
+                &.moderado td:first-child {
+                  color: $risk-moderado;
+                  font-weight: 500;
+                }
+                
+                &.alto td:first-child {
+                  color: $risk-alto;
+                  font-weight: 500;
+                }
+                
+                td {
+                  border-bottom: 1px solid $gray-200;
+                  color: $gray-700;
+                  
+                  .risk-dot {
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    margin-right: 0.5rem;
+                  }
+                }
+                
+                &.bajo .risk-dot {
+                  background-color: $risk-bajo;
+                }
+                
+                &.moderado .risk-dot {
+                  background-color: $risk-moderado;
+                }
+                
+                &.alto .risk-dot {
+                  background-color: $risk-alto;
+                }
+              }
+            }
+          }
+          
+          // Questionnaire table
+          .questionnaire-table {
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              
+              th, td {
+                padding: 0.75rem 1rem;
+                text-align: left;
+              }
+              
+              th {
+                background-color: $gray-100;
+                font-weight: 600;
+                color: $gray-700;
+              }
+              
+              td {
+                border-bottom: 1px solid $gray-200;
+                color: $gray-700;
+              }
+            }
+          }
+          
+          // Risk distribution bars
+          .risk-distribution-bars {
+            .distribution-bar {
+              height: 45px;
+              margin-bottom: 15px;
+              border-radius: 4px;
+              color: $white;
+              display: flex;
+              align-items: center;
+              padding: 0 15px;
+              font-weight: 500;
+              transition: width 1s ease-in-out;
+              font-size: 0.875rem;
+              min-width: 60px;
+              
+              &.bajo {
+                background-color: $risk-bajo;
+              }
+              
+              &.moderado {
+                background-color: $risk-moderado;
+              }
+              
+              &.alto {
+                background-color: $risk-alto;
+              }
+              
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+        }
+      }
+      
+      // Global recommendations card
+      .global-recommendations-card {
+        background-color: $white;
+        border-radius: $border-radius;
+        box-shadow: $card-shadow;
+        padding: 1.5rem;
+        
+        h3 {
+          margin-top: 0;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid $gray-200;
+        }
+        
+        .global-risk-level {
+          display: flex;
+          align-items: center;
+          margin-bottom: 1.5rem;
+          padding: 1rem;
+          border-radius: $border-radius;
+          
+          &.bajo {
+            background-color: rgba($risk-bajo, 0.1);
+            
+            .risk-indicator {
+              background-color: $risk-bajo;
+            }
+          }
+          
+          &.moderado {
+            background-color: rgba($risk-moderado, 0.1);
+            
+            .risk-indicator {
+              background-color: $risk-moderado;
+            }
+          }
+          
+          &.alto {
+            background-color: rgba($risk-alto, 0.1);
+            
+            .risk-indicator {
+              background-color: $risk-alto;
+            }
+          }
+          
+          .risk-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 1rem;
+          }
+          
+          strong {
+            font-weight: 600;
+          }
+        }
+        
+        .global-recommendations-list {
+          margin: 0;
+          padding-left: 1.5rem;
+          
+          li {
+            margin-bottom: 0.75rem;
+            color: $gray-700;
+            line-height: 1.5;
+            
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+    
+    // Preventive measures section
+    .preventive-measures-section {
+      margin-bottom: 2.5rem;
+      
+      .measures-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        
+        .measure-card {
+          background-color: $white;
+          border-radius: $border-radius;
+          box-shadow: $card-shadow;
+          padding: 1.5rem;
+          text-align: center;
+          transition: $transition;
+          
+          &:hover {
+            transform: translateY(-5px);
+          }
+          
+          .measure-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: rgba($primary, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+            
+            i {
+              font-size: 1.75rem;
+              color: $primary;
+            }
+          }
+          
+          h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: $secondary;
+          }
+          
+          p {
+            color: $gray-600;
+            margin: 0;
+            line-height: 1.5;
+          }
+        }
+      }
+    }
+    
+    // Normative compliance section
+    .normative-compliance-section {
+      margin-bottom: 1rem;
+      
+      .compliance-description {
+        background-color: $white;
+        border-radius: $border-radius;
+        box-shadow: $card-shadow;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: $gray-700;
+        line-height: 1.6;
+      }
+      
+      .compliance-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+        
+        .step-card {
+          background-color: $white;
+          border-radius: $border-radius;
+          box-shadow: $card-shadow;
+          padding: 1.5rem;
+          border-top: 4px solid $primary;
+          
+          h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: $primary;
+          }
+          
+          p {
+            color: $gray-600;
+            margin: 0;
+            line-height: 1.5;
           }
         }
       }
@@ -936,40 +982,57 @@ $transition: all 0.3s ease;
   }
 }
 
-// Responsive
-@media (max-width: 992px) {
-  .global-data-section {
-    .global-stats {
-      flex-wrap: wrap;
-    }
+// Responsive adjustments
+@media (max-width: 768px) {
+  .resultados-container {
+    padding: 1rem;
     
-    .data-tables {
-      flex-direction: column;
-    }
-    
-    .department-chart {
-      .department-item {
+    .results-dashboard {
+      .notification-banner {
         flex-direction: column;
-        align-items: flex-start;
         
-        .department-name {
-          width: 100%;
-          margin-bottom: 0.5rem;
-        }
-        
-        .department-bar-container {
-          width: 100%;
-          margin: 0 0 0.5rem 0;
+        .notification-icon {
+          margin-right: 0;
+          margin-bottom: 1rem;
+          justify-content: center;
           
-          .department-value {
-            right: 10px;
+          i {
+            font-size: 2rem;
           }
         }
         
-        .department-risk {
-          width: 100%;
-          text-align: left;
+        .notification-content {
+          text-align: center;
+          
+          h2 {
+            font-size: 1.2rem;
+          }
+          
+          .cta-button {
+            width: 100%;
+            justify-content: center;
+          }
         }
+      }
+      
+      .risk-cards-row {
+        .risk-card {
+          min-width: 100%;
+        }
+      }
+      
+      .data-grid {
+        .data-card {
+          min-width: 100%;
+        }
+      }
+      
+      .measures-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .compliance-steps {
+        grid-template-columns: 1fr;
       }
     }
   }

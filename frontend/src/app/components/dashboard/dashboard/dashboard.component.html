@@ -53,23 +53,35 @@
   
   <!-- Main Content -->
   <main class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <h1 class="welcome-message">Bienvenido, {{user?.nombre || 'Usuario'}}!</h1>
+        <p class="notifications">
+          <i class="fas fa-bell"></i> Tienes 2 nuevos mensajes y 15 nuevas tareas
+        </p>
+      </div>
+      <div class="header-right">
+        <div class="dropdown-container">
+          <button class="header-button download-btn" [class.loading]="isGeneratingPdf" [disabled]="isGeneratingPdf">
+            <span *ngIf="!isGeneratingPdf">
+              <i class="fas fa-file-download"></i> Descargar Reporte <i class="fas fa-chevron-down"></i>
+            </span>
+            <span *ngIf="isGeneratingPdf" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i> Generando PDF...
+            </span>
+          </button>
+          <div class="dropdown-menu" *ngIf="!isGeneratingPdf">
+            <a class="dropdown-item" (click)="descargarReportePersonal()">
+              <i class="fas fa-user"></i> Mi Reporte
+            </a>
+            <a class="dropdown-item" (click)="descargarReporteGeneral()">
+              <i class="fas fa-users"></i> Reporte General
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
     <div class="main-content-inner">
-      <header class="top-header">
-        <div class="header-left">
-          <h1 class="welcome-message">Bienvenido, {{user?.nombre || 'Usuario'}}!</h1>
-          <p class="notifications">
-            <i class="fas fa-bell"></i> Tienes 2 nuevos mensajes y 15 nuevas tareas
-          </p>
-        </div>
-        <div class="header-right">
-          <button class="header-button">
-            <i class="fas fa-envelope"></i> Mensajes
-          </button>
-          <button class="header-button">
-            <i class="fas fa-cog"></i> Configuración
-          </button>
-        </div>
-      </header>
       
       <div class="content-area">
         <router-outlet></router-outlet>

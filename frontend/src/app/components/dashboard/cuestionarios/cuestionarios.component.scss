@@ -736,8 +736,9 @@ $text-muted: #95aac9;
   text-align: center;
   background-color: $white;
   border-radius: $border-radius;
-  max-width: 800px;
+  max-width: none;
   margin: 0 auto;
+  width: 100%;
   
   .icon-container {
     margin-bottom: 30px;
