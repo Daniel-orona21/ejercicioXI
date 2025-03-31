@@ -675,6 +675,7 @@ class Respuesta {
         c.nombre as cuestionario_nombre,
         c.codigo as cuestionario_codigo,
         c.descripcion as cuestionario_descripcion,
+        rc.id as respuesta_cuestionario_id,
         rc.usuario_id,
         rc.estado as cuestionario_estado,
         rc.fecha_inicio,
@@ -684,14 +685,40 @@ class Respuesta {
       FROM respuestas_preguntas rp
       JOIN respuestas_cuestionarios rc ON rp.respuesta_cuestionario_id = rc.id
       JOIN preguntas p ON rp.pregunta_id = p.id
-      JOIN cuestionarios c ON p.cuestionario_id = c.id
+      JOIN cuestionarios c ON rc.cuestionario_id = c.id  -- Usando rc.cuestionario_id para garantizar que obtenemos el cuestionario correcto
       JOIN usuarios u ON rc.usuario_id = u.id
+      WHERE c.id = p.cuestionario_id  -- Asegurarnos que la pregunta pertenece al cuestionario correcto
       ORDER BY rc.usuario_id, c.id, p.orden
     `;
     
     return new Promise((resolve, reject) => {
       db.query(query, [], (error, results) => {
         if (error) reject(error);
+        
+        // Log para debugging
+        console.log(`Se encontraron ${results.length} respuestas en total`);
+        
+        // Verificar cuestionarios completados
+        const cuestionariosCompletados = new Set();
+        results.forEach(r => {
+          if (r.cuestionario_estado === 'completado') {
+            cuestionariosCompletados.add(`${r.usuario_id}-${r.cuestionario_id}-${r.cuestionario_nombre}`);
+          }
+        });
+        
+        console.log(`Cuestionarios completados: ${Array.from(cuestionariosCompletados).join(', ')}`);
+        
+        // Agrupar por nombre de cuestionario para verificar la distribución
+        const porCuestionario = {};
+        results.forEach(r => {
+          if (!porCuestionario[r.cuestionario_nombre]) {
+            porCuestionario[r.cuestionario_nombre] = 0;
+          }
+          porCuestionario[r.cuestionario_nombre]++;
+        });
+        
+        console.log('Distribución por cuestionario:', porCuestionario);
+        
         resolve(results);
       });
     });

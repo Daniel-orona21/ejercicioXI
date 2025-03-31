@@ -837,3 +837,41 @@ $text-muted: #95aac9;
     }
   }
 }
+
+// Styling for question options
+.pregunta-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+  margin-bottom: 25px;
+  
+  .option-btn {
+    flex: 1;
+    min-width: 120px;
+    max-width: 170px;
+    height: 60px;
+    padding: 12px 20px;
+    border: 2px solid $border-color;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover:not(.selected) {
+      border-color: color.scale($secondary-color, $lightness: -5%);
+      background-color: $light-bg;
+    }
+    
+    &.selected {
+      background-color: $secondary-color;
+      color: white;
+      border-color: $secondary-color;
+    }
+  }
+}

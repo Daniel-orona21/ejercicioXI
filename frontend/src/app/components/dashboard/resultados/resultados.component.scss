@@ -618,6 +618,13 @@ $transition: all 0.3s ease;
         padding-bottom: 0.5rem;
       }
       
+      .data-description {
+        color: $text-secondary;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+        font-size: 0.9rem;
+      }
+      
       table {
         width: 100%;
         border-collapse: collapse;
@@ -652,8 +659,8 @@ $transition: all 0.3s ease;
         margin-top: 1.5rem;
         
         .distribution-bar {
-          height: 30px;
-          margin-bottom: 8px;
+          height: 45px;
+          margin-bottom: 15px;
           border-radius: 4px;
           color: white;
           display: flex;
@@ -661,7 +668,7 @@ $transition: all 0.3s ease;
           padding: 0 10px;
           font-weight: 500;
           transition: width 1s ease-in-out;
-          font-size: 0.9rem;
+          font-size: 1rem;
           min-width: 60px;
           box-sizing: border-box;
           

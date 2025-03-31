@@ -225,19 +225,15 @@
             </div>
             <div class="question-text">
               <p>{{pregunta.texto}}</p>
-              <div class="custom-options">
-                <label 
-                  class="custom-option" 
+              <div class="pregunta-options">
+                <button 
+                  type="button"
+                  class="option-btn" 
                   *ngFor="let opcion of pregunta.opciones"
-                  [class.selected]="respuestas.entorno[i] === opcion">
-                  <input 
-                    type="radio" 
-                    name="entorno_{{i}}" 
-                    [value]="opcion"
-                    [checked]="respuestas.entorno[i] === opcion"
-                    (change)="responderPregunta('entorno', i, opcion)">
-                  <span>{{opcion}}</span>
-                </label>
+                  [class.selected]="respuestas.entorno[i] === opcion"
+                  (click)="responderPregunta('entorno', i, opcion)">
+                  {{opcion}}
+                </button>
               </div>
             </div>
           </div>

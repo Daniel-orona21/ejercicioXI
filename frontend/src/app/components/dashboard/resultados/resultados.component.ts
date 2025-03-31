@@ -68,8 +68,7 @@ export class ResultadosComponent implements OnInit {
   coloresRiesgo: { [key: string]: string } = {
     'Bajo': '#28a745',       // Verde
     'Moderado': '#ffc107',   // Amarillo
-    'Alto': '#fd7e14',       // Naranja
-    'Muy Alto': '#dc3545'    // Rojo
+    'Alto': '#dc3545'        // Rojo (antes era naranja)
   };
 
   ngOnInit(): void {
@@ -297,8 +296,7 @@ export class ResultadosComponent implements OnInit {
     // Usar los rangos específicos en lugar de porcentajes normalizados
     if (puntaje <= 10) return 'Bajo';
     if (puntaje <= 20) return 'Moderado';
-    if (puntaje <= 30) return 'Alto';
-    return 'Muy Alto';
+    return 'Alto'; // Todo lo que sea mayor a 20 puntos será considerado Alto
   }
   
   // Método para generar recomendaciones según el nivel de riesgo
@@ -319,22 +317,19 @@ export class ResultadosComponent implements OnInit {
         recomendaciones.push('Reducción de carga laboral y horarios excesivos.');
         recomendaciones.push('Programas de bienestar y apoyo psicológico.');
         recomendaciones.push('Supervisión de casos de acoso y mejora del clima organizacional.');
-        break;
-      case 'Muy Alto':
         recomendaciones.push('Intervención inmediata en la empresa.');
         recomendaciones.push('Evaluaciones individuales con especialistas.');
         recomendaciones.push('Revisión de condiciones laborales y posible reestructuración.');
-        recomendaciones.push('Posible reporte a la STPS si se detecta incumplimiento grave.');
         break;
     }
     
     // Recomendaciones específicas adicionales según el tipo de cuestionario
-    if (tipoCuestionario === 'traumaticos' && (nivelRiesgo === 'Alto' || nivelRiesgo === 'Muy Alto')) {
+    if (tipoCuestionario === 'traumaticos' && nivelRiesgo === 'Alto') {
       recomendaciones.push('Atención psicológica especializada para personal expuesto a eventos traumáticos.');
       recomendaciones.push('Implementación de protocolos de seguridad y manejo de crisis.');
     }
     
-    if (tipoCuestionario === 'factores' && (nivelRiesgo === 'Alto' || nivelRiesgo === 'Muy Alto')) {
+    if (tipoCuestionario === 'factores' && nivelRiesgo !== 'Bajo') {
       recomendaciones.push('Reestructuración de turnos y cargas de trabajo.');
       recomendaciones.push('Revisión de políticas de descanso y tiempo libre.');
     }
@@ -499,8 +494,7 @@ export class ResultadosComponent implements OnInit {
     switch(nivelRiesgo) {
       case 'Bajo': return '0-10 puntos';
       case 'Moderado': return '11-20 puntos';
-      case 'Alto': return '21-30 puntos';
-      case 'Muy Alto': return '31+ puntos';
+      case 'Alto': return '21+ puntos';
       default: return '';
     }
   }
@@ -540,15 +534,7 @@ export class ResultadosComponent implements OnInit {
     // Contador por cuestionario
     const respuestasPorCuestionario: {[key: string]: {respuestas: number, completados: number}} = {};
     
-    // Calcular niveles de riesgo por usuario y cuestionario
-    const nivelesRiesgo: {[key: string]: number} = {
-      'Bajo': 0,
-      'Moderado': 0, 
-      'Alto': 0,
-      'Muy Alto': 0
-    };
-    
-    // Procesar cada respuesta
+    // Procesar cada respuesta para contar usuarios y respuestas
     datos.forEach(respuesta => {
       // Contar usuarios únicos
       if (respuesta.usuario_id) {
@@ -590,12 +576,52 @@ export class ResultadosComponent implements OnInit {
       respuestasPorUsuario[clave][respuesta.cuestionario_id].push(respuesta);
     });
     
+    // Registrar los cuestionarios completados para debuggear
+    console.log('Cuestionarios por usuario:', respuestasPorUsuario);
+    
+    // Para seguimiento de cuestionarios completados
+    const cuestionariosCompletados: {[key: string]: {[key: string]: boolean}} = {};
+    
+    // Registrar los resultados de riesgo para cada usuario (el peor nivel por usuario)
+    const nivelesRiesgoPorUsuario: {[key: string]: string} = {};
+    
     // Ahora calcular el nivel de riesgo para cada usuario/cuestionario
     Object.keys(respuestasPorUsuario).forEach(usuarioId => {
+      // Inicializar registro de completados para este usuario
+      if (!cuestionariosCompletados[usuarioId]) {
+        cuestionariosCompletados[usuarioId] = {};
+      }
+      
+      // Para este usuario, seguiremos el peor nivel de riesgo encontrado
+      let peorNivelRiesgoUsuario = 'Bajo';
+      const nivelPrioridad: {[key: string]: number} = {
+        'Bajo': 1,
+        'Moderado': 2,
+        'Alto': 3
+      };
+      
       Object.keys(respuestasPorUsuario[usuarioId]).forEach(cuestionarioId => {
         const respuestasUsuario = respuestasPorUsuario[usuarioId][cuestionarioId];
         
-        // Verificar si hay suficientes respuestas para calcular un nivel de riesgo
+        if (!respuestasUsuario || respuestasUsuario.length === 0) return;
+        
+        // Obtener info para debugging
+        const nombreCuestionario = respuestasUsuario[0].cuestionario_nombre;
+        const estadoCuestionario = respuestasUsuario[0].cuestionario_estado;
+        
+        console.log(`Usuario ${usuarioId} - Cuestionario: ${nombreCuestionario} (ID: ${cuestionarioId}) - Estado: ${estadoCuestionario} - Respuestas: ${respuestasUsuario.length}`);
+        
+        // Marcar como completado si el estado es 'completado'
+        if (estadoCuestionario === 'completado') {
+          cuestionariosCompletados[usuarioId][cuestionarioId] = true;
+          
+          if (nombreCuestionario && respuestasPorCuestionario[nombreCuestionario]) {
+            respuestasPorCuestionario[nombreCuestionario].completados++;
+            console.log(`Incrementando completados para ${nombreCuestionario} a ${respuestasPorCuestionario[nombreCuestionario].completados}`);
+          }
+        }
+        
+        // Solo calcular nivel de riesgo si hay suficientes respuestas
         if (respuestasUsuario.length >= 5) {
           // Obtener el código del cuestionario para aplicar la lógica correcta
           const codigoCuestionario = respuestasUsuario[0].cuestionario_codigo?.toLowerCase() || '';
@@ -612,23 +638,37 @@ export class ResultadosComponent implements OnInit {
           
           // Determinar nivel de riesgo
           const nivelRiesgo = this.determinarNivelRiesgo(puntajeTotal, respuestasUsuario.length);
+          console.log(`Usuario ${usuarioId} - Cuestionario ${nombreCuestionario} - Nivel de riesgo: ${nivelRiesgo} (Puntaje: ${puntajeTotal})`);
           
-          // Incrementar contador de nivel de riesgo
-          nivelesRiesgo[nivelRiesgo]++;
-          
-          // Marcar como completado en el contador por cuestionario
-          const nombreCuestionario = respuestasUsuario[0].cuestionario_nombre;
-          if (nombreCuestionario && respuestasPorCuestionario[nombreCuestionario]) {
-            respuestasPorCuestionario[nombreCuestionario].completados++;
+          // Actualizar el peor nivel de riesgo para este usuario si corresponde
+          if (nivelPrioridad[nivelRiesgo] > nivelPrioridad[peorNivelRiesgoUsuario]) {
+            peorNivelRiesgoUsuario = nivelRiesgo;
           }
         }
       });
+      
+      // Asignar el nivel de riesgo final para este usuario (el peor de todos sus cuestionarios)
+      nivelesRiesgoPorUsuario[usuarioId] = peorNivelRiesgoUsuario;
     });
     
+    // Contar cuántos usuarios hay en cada nivel de riesgo
+    const conteoNivelesRiesgo: {[key: string]: number} = {
+      'Bajo': 0,
+      'Moderado': 0, 
+      'Alto': 0
+    };
+    
+    Object.values(nivelesRiesgoPorUsuario).forEach(nivel => {
+      conteoNivelesRiesgo[nivel]++;
+    });
+    
+    console.log('Niveles de riesgo por usuario:', nivelesRiesgoPorUsuario);
+    console.log('Conteo de niveles de riesgo:', conteoNivelesRiesgo);
+    
     // Convertir a formato para la UI
-    const distribucionRiesgo = Object.keys(nivelesRiesgo).map(nivel => {
-      const cantidad = nivelesRiesgo[nivel];
-      const totalUsuariosConNivel = Object.values(nivelesRiesgo).reduce((sum, val) => sum + val, 0);
+    const distribucionRiesgo = Object.keys(conteoNivelesRiesgo).map(nivel => {
+      const cantidad = conteoNivelesRiesgo[nivel];
+      const totalUsuariosConNivel = Object.values(conteoNivelesRiesgo).reduce((sum, val) => sum + val, 0);
       const porcentaje = totalUsuariosConNivel > 0 ? (cantidad / totalUsuariosConNivel * 100).toFixed(2) : '0';
       
       return {
@@ -643,6 +683,10 @@ export class ResultadosComponent implements OnInit {
       respuestas: respuestasPorCuestionario[cuestionario].respuestas,
       completados: respuestasPorCuestionario[cuestionario].completados
     }));
+    
+    // Log para depuración
+    console.log('Cuestionarios completados:', cuestionariosCompletados);
+    console.log('Resumen por cuestionario:', respuestasCuestionarioArray);
     
     // Actualizar el objeto de datos globales
     this.datosGlobales = {
@@ -736,13 +780,10 @@ export class ResultadosComponent implements OnInit {
         recomendaciones.push('Evaluación detallada de factores de riesgo.');
         recomendaciones.push('Implementación de programas de apoyo psicológico y manejo del estrés.');
         recomendaciones.push('Revisión de políticas organizacionales relacionadas con horarios y cargas de trabajo.');
-        break;
-      case 'Muy Alto':
         recomendaciones.push('Intervención urgente a nivel organizacional.');
         recomendaciones.push('Reestructuración de procesos y cargas laborales.');
         recomendaciones.push('Programas intensivos de apoyo psicológico y manejo del estrés.');
         recomendaciones.push('Revisión completa de políticas organizacionales.');
-        recomendaciones.push('Elaboración de informes detallados para cumplimiento con la STPS.');
         break;
     }
     

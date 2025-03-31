@@ -64,11 +64,11 @@ export class CuestionariosComponent implements OnInit {
       },
       {
         texto: '¿Recibe capacitación adecuada para desempeñar sus funciones?',
-        opciones: ['Sí', 'No', 'A Veces']
+        opciones: ['Sí', 'A Veces', 'No']
       },
       {
         texto: '¿Considera que el ambiente laboral es saludable y colaborativo?',
-        opciones: ['Sí', 'No', 'En Ocasiones']
+        opciones: ['Sí', 'A Veces', 'No']
       }
     ]
   };
