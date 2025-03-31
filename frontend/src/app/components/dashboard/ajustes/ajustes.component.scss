@@ -1,8 +1,10 @@
 // Variables
-$primary-color: #1e2a4a;
-$secondary-color: #3a57e8;
+$primary-color: #3a57e8;
+$secondary-color: #1e2a4a;
 $accent-color: #5270ff;
-$success-color: #3ac47d;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
 $text-color: #333;
 $text-light: #6c757d;
 $white: #fff;
@@ -10,6 +12,9 @@ $gray-100: #f8f9fa;
 $gray-200: #e9ecef;
 $gray-300: #dee2e6;
 $border-radius: 8px;
+
+// Importar los módulos de Sass necesarios para usar las nuevas funciones
+@use "sass:color";
 
 .ajustes-container {
   padding: 1rem 0;
@@ -378,7 +383,7 @@ $border-radius: 8px;
         margin-top: 1.5rem;
         
         &:hover {
-          background-color: darken($secondary-color, 5%);
+          background-color: color.scale($secondary-color, $lightness: -5%);
         }
       }
       

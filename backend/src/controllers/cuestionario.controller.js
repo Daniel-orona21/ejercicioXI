@@ -239,4 +239,27 @@ exports.reiniciarYRestaurarRespuestas = async (req, res) => {
       error: error.message
     });
   }
+};
+
+// Obtener todas las respuestas de todos los usuarios (para estadísticas globales)
+// Esta ruta sólo debería ser accesible por administradores en un entorno de producción
+exports.getAllRespuestasUsuarios = async (req, res) => {
+  try {
+    // En un entorno real, aquí verificaríamos que el usuario sea administrador
+    // if (!req.user.isAdmin) return res.status(403).json({ success: false, message: 'No autorizado' });
+    
+    const todasLasRespuestas = await Respuesta.getAllRespuestasUsuarios();
+    
+    res.status(200).json({
+      success: true,
+      data: todasLasRespuestas
+    });
+  } catch (error) {
+    console.error('Error al obtener todas las respuestas de todos los usuarios:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener todas las respuestas',
+      error: error.message
+    });
+  }
 }; 

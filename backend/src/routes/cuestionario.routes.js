@@ -28,4 +28,8 @@ router.post('/corregir-respuestas', authMiddleware, cuestionarioController.corre
 // Ruta para reiniciar y restaurar todas las respuestas
 router.post('/restaurar-respuestas', authMiddleware, cuestionarioController.reiniciarYRestaurarRespuestas);
 
+// Ruta para obtener todas las respuestas de todos los usuarios (para estadísticas globales)
+// Nota: En un entorno de producción, esta ruta debería estar protegida por un middleware de admin
+router.get('/todas-respuestas', authMiddleware, cuestionarioController.getAllRespuestasUsuarios);
+
 module.exports = router; 

@@ -659,6 +659,43 @@ class Respuesta {
       throw error;
     }
   }
+
+  // Obtener todas las respuestas de todos los usuarios (para estadísticas globales)
+  static async getAllRespuestasUsuarios() {
+    const query = `
+      SELECT 
+        rp.id as respuesta_id,
+        rp.respuesta_texto,
+        rp.created_at as fecha_respuesta,
+        rp.pregunta_id,
+        p.texto as pregunta_texto,
+        p.orden as pregunta_orden,
+        p.tipo as pregunta_tipo,
+        p.cuestionario_id,
+        c.nombre as cuestionario_nombre,
+        c.codigo as cuestionario_codigo,
+        c.descripcion as cuestionario_descripcion,
+        rc.usuario_id,
+        rc.estado as cuestionario_estado,
+        rc.fecha_inicio,
+        rc.fecha_fin,
+        u.nombre as usuario_nombre,
+        u.email as usuario_email
+      FROM respuestas_preguntas rp
+      JOIN respuestas_cuestionarios rc ON rp.respuesta_cuestionario_id = rc.id
+      JOIN preguntas p ON rp.pregunta_id = p.id
+      JOIN cuestionarios c ON p.cuestionario_id = c.id
+      JOIN usuarios u ON rc.usuario_id = u.id
+      ORDER BY rc.usuario_id, c.id, p.orden
+    `;
+    
+    return new Promise((resolve, reject) => {
+      db.query(query, [], (error, results) => {
+        if (error) reject(error);
+        resolve(results);
+      });
+    });
+  }
 }
 
 module.exports = Respuesta; 

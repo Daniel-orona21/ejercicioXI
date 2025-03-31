@@ -1,141 +1,276 @@
 <div class="results-container">
-  <h1 class="page-title">Resultados</h1>
+  <h1 class="page-title">Evaluación de Riesgos Psicosociales (NOM-035)</h1>
   
-  <div class="summary-cards">
-    <div class="row">
-      <div class="card">
-        <div class="card-content">
-          <div class="number primary">{{summaryData.pendingTasks}}</div>
-          <div class="label">Tareas Pendientes</div>
-        </div>
-        <div class="card-footer">
-          Completadas: {{summaryData.completedTasks}}
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="card-content">
-          <div class="number danger">{{summaryData.overdueTasks}}</div>
-          <div class="label">Tareas Atrasadas</div>
-        </div>
-        <div class="card-footer">
-          Desde ayer: {{summaryData.yesterday}}
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="card-content">
-          <div class="number warning">{{summaryData.openIssues}}</div>
-          <div class="label">Problemas Abiertos</div>
-        </div>
-        <div class="card-footer">
-          Cerrados hoy: {{summaryData.closedToday}}
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="card-content">
-          <div class="number success">{{summaryData.proposals}}</div>
-          <div class="label">Propuestas</div>
-        </div>
-        <div class="card-footer">
-          Implementadas: {{summaryData.implemented}}
-        </div>
-      </div>
-    </div>
+  <div *ngIf="loading" class="loading-container">
+    <div class="loader"></div>
+    <p>Cargando resultados...</p>
   </div>
   
-  <div class="data-section">
-    <div class="section-header">
-      <h2>Resumen de Factores de Riesgo</h2>
-      <div class="date-selector">
-        <button class="date-btn active">Esta Semana</button>
-        <button class="date-btn">Semana Anterior</button>
+  <div *ngIf="error" class="error-message">
+    <i class="fas fa-exclamation-circle"></i>
+    <p>{{ error }}</p>
+  </div>
+  
+  <!-- Mensaje cuando no hay respuestas -->
+  <div *ngIf="!loading && !error && resultadosRiesgo.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="fas fa-clipboard-list"></i>
+    </div>
+    <h2>No hay respuestas disponibles</h2>
+    <p>Para ver el análisis de factores de riesgo psicosocial y obtener recomendaciones según la NOM-035, primero debes completar los cuestionarios.</p>
+    <button class="action-button" routerLink="/dashboard/cuestionarios">
+      <i class="fas fa-file-alt"></i> Realizar evaluación
+    </button>
+  </div>
+  
+  <div *ngIf="!loading && !error && resultadosRiesgo.length > 0" class="results-content">
+    <!-- Sección de resumen -->
+    <div class="summary-cards">
+      <div class="row">
+        <div *ngFor="let resultado of resultadosRiesgo" class="card risk-card" [ngStyle]="{'border-color': resultado.colorRiesgo}">
+          <div class="card-header" [ngStyle]="{'background-color': resultado.colorRiesgo}">
+            <h2>{{ resultado.cuestionarioNombre }}</h2>
+          </div>
+          <div class="card-content">
+            <div class="risk-level" [ngStyle]="{'color': resultado.colorRiesgo}">
+              {{ resultado.nivelRiesgo }}
+            </div>
+            <div class="risk-score">
+              Puntaje: {{ resultado.puntajeTotal }} 
+              <span class="risk-range">({{ obtenerRangoRiesgo(resultado.nivelRiesgo) }})</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
-    <div class="chart-container">
-      <div class="chart">
-        <!-- Aquí iría el gráfico -->
-        <div class="placeholder-chart">
-          <div class="chart-bar" style="height: 70%"></div>
-          <div class="chart-bar" style="height: 90%"></div>
-          <div class="chart-bar" style="height: 50%"></div>
-          <div class="chart-bar" style="height: 80%"></div>
-          <div class="chart-bar" style="height: 60%"></div>
-        </div>
+    <!-- Sección de gráficos -->
+    <div class="data-section">
+      <div class="section-header">
+        <h2>Análisis Detallado de Riesgos</h2>
       </div>
       
-      <div class="stats-container">
-        <div class="stat-box">
-          <div class="stat-number">214</div>
-          <div class="stat-label">Evaluaciones Completadas</div>
+      <div class="chart-container">
+        <div class="chart">
+          <!-- Gráfico de barras para los niveles de riesgo -->
+          <div class="risk-chart">
+            <ng-container *ngFor="let resultado of resultadosRiesgo">
+              <div class="chart-column">
+                <div class="chart-label">{{ resultado.cuestionarioNombre.split(' ')[0] }}</div>
+                <div class="chart-bar-container">
+                  <div class="chart-bar" 
+                       [ngStyle]="{
+                         'height': (resultado.puntajeTotal / 40 * 100) + '%',
+                         'background-color': resultado.colorRiesgo
+                       }">
+                  </div>
+                </div>
+                <div class="chart-value">{{ resultado.puntajeTotal }}</div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sección de recomendaciones -->
+    <div class="recommendations-section">
+      <h2>Recomendaciones según NOM-035</h2>
+      
+      <div class="recommendation-cards">
+        <div *ngFor="let resultado of resultadosRiesgo" class="recommendation-card" [ngStyle]="{'border-color': resultado.colorRiesgo}">
+          <div class="card-header" [ngStyle]="{'background-color': resultado.colorRiesgo}">
+            <h3>{{ resultado.cuestionarioNombre }}</h3>
+            <span class="risk-badge">{{ resultado.nivelRiesgo }}</span>
+          </div>
+          <div class="card-body">
+            <ul class="recommendations-list">
+              <li *ngFor="let recomendacion of resultado.recomendaciones">
+                {{ recomendacion }}
+              </li>
+            </ul>
+            
+            <div class="action-buttons">
+              <button class="action-btn print-btn">
+                <i class="fas fa-print"></i> Imprimir informe
+              </button>
+              <button class="action-btn share-btn">
+                <i class="fas fa-share-alt"></i> Compartir
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sección de medidas preventivas -->
+    <div class="preventive-section">
+      <h2>Medidas Preventivas Generales</h2>
+      
+      <div class="preventive-grid">
+        <div class="preventive-item">
+          <div class="icon-container">
+            <i class="fas fa-briefcase"></i>
+          </div>
+          <h3>Organización del Trabajo</h3>
+          <p>Establecer políticas claras sobre distribución de cargas de trabajo y responsabilidades.</p>
         </div>
         
-        <div class="stat-box">
-          <div class="stat-number">75</div>
-          <div class="stat-label">Factores Identificados</div>
+        <div class="preventive-item">
+          <div class="icon-container">
+            <i class="fas fa-comments"></i>
+          </div>
+          <h3>Comunicación Efectiva</h3>
+          <p>Implementar canales de comunicación abiertos entre todos los niveles jerárquicos.</p>
+        </div>
+        
+        <div class="preventive-item">
+          <div class="icon-container">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3>Ambiente Laboral</h3>
+          <p>Promover un ambiente de respeto, colaboración y reconocimiento del trabajo.</p>
+        </div>
+        
+        <div class="preventive-item">
+          <div class="icon-container">
+            <i class="fas fa-heart"></i>
+          </div>
+          <h3>Bienestar Integral</h3>
+          <p>Ofrecer programas de bienestar que incluyan actividades físicas y manejo del estrés.</p>
         </div>
       </div>
     </div>
-  </div>
-  
-  <div class="table-section">
-    <h2>Últimas Evaluaciones</h2>
     
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Fecha</th>
-          <th>Empleado</th>
-          <th>Área</th>
-          <th>Nivel de Riesgo</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>#FR001</td>
-          <td>10 Ago 2023</td>
-          <td>María González</td>
-          <td>Recursos Humanos</td>
-          <td><span class="badge high">Alto</span></td>
-          <td><span class="status completed">Completado</span></td>
-        </tr>
-        <tr>
-          <td>#FR002</td>
-          <td>12 Ago 2023</td>
-          <td>Juan Pérez</td>
-          <td>Finanzas</td>
-          <td><span class="badge medium">Medio</span></td>
-          <td><span class="status completed">Completado</span></td>
-        </tr>
-        <tr>
-          <td>#FR003</td>
-          <td>15 Ago 2023</td>
-          <td>Ana Martínez</td>
-          <td>Operaciones</td>
-          <td><span class="badge low">Bajo</span></td>
-          <td><span class="status completed">Completado</span></td>
-        </tr>
-        <tr>
-          <td>#FR004</td>
-          <td>18 Ago 2023</td>
-          <td>Carlos Rodríguez</td>
-          <td>Tecnología</td>
-          <td><span class="badge high">Alto</span></td>
-          <td><span class="status pending">Pendiente</span></td>
-        </tr>
-        <tr>
-          <td>#FR005</td>
-          <td>20 Ago 2023</td>
-          <td>Laura Sánchez</td>
-          <td>Marketing</td>
-          <td><span class="badge medium">Medio</span></td>
-          <td><span class="status in-progress">En Progreso</span></td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Sección de normatividad -->
+    <div class="normative-section">
+      <h2>Cumplimiento Normativo NOM-035-STPS-2018</h2>
+      
+      <div class="normative-content">
+        <p>Esta evaluación cumple con los requisitos establecidos en la <strong>NOM-035-STPS-2018</strong>, que establece los elementos para identificar, analizar y prevenir los factores de riesgo psicosocial en los centros de trabajo.</p>
+        
+        <div class="normative-items">
+          <div class="normative-item">
+            <h4>Identificación</h4>
+            <p>Los factores de riesgo psicosocial se han identificado mediante cuestionarios validados.</p>
+          </div>
+          
+          <div class="normative-item">
+            <h4>Análisis</h4>
+            <p>Se han establecido niveles de riesgo conforme a los parámetros de la norma.</p>
+          </div>
+          
+          <div class="normative-item">
+            <h4>Prevención</h4>
+            <p>Se han generado recomendaciones específicas para cada nivel de riesgo.</p>
+          </div>
+          
+          <div class="normative-item">
+            <h4>Seguimiento</h4>
+            <p>Se establecen periodos de evaluación según el nivel de riesgo detectado.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nueva sección de datos globales -->
+    <div class="global-data-section">
+      <h2>Datos Globales de la Organización</h2>
+      
+      <div class="global-stats">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-value">{{datosGlobales.totalUsuarios}}</div>
+          <div class="stat-label">Usuarios Evaluados</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-clipboard-check"></i>
+          </div>
+          <div class="stat-value">{{datosGlobales.totalRespuestas}}</div>
+          <div class="stat-label">Respuestas Registradas</div>
+        </div>
+      </div>
+      
+      <div class="data-tables">
+        <!-- Distribución por nivel de riesgo -->
+        <div class="data-table">
+          <h3>Distribución por Nivel de Riesgo</h3>
+          <table class="risk-distribution-table">
+            <thead>
+              <tr>
+                <th>Nivel</th>
+                <th>Cantidad</th>
+                <th>Porcentaje</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of datosGlobales.distribucionRiesgo" [ngStyle]="{'background-color': coloresRiesgo[item.nivel] + '20'}">
+                <td>
+                  <span class="risk-dot" [ngStyle]="{'background-color': coloresRiesgo[item.nivel]}"></span>
+                  {{item.nivel}}
+                </td>
+                <td>{{item.cantidad}}</td>
+                <td>{{item.porcentaje}}%</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <!-- Gráfico de distribución -->
+          <div class="risk-distribution-chart">
+            <div *ngFor="let item of datosGlobales.distribucionRiesgo" 
+                 class="distribution-bar" 
+                 [ngStyle]="{
+                    'width': item.porcentaje + '%',
+                    'background-color': coloresRiesgo[item.nivel]
+                 }">
+              {{item.nivel}} ({{item.porcentaje}}%)
+            </div>
+          </div>
+        </div>
+        
+        <!-- Respuestas por cuestionario -->
+        <div class="data-table">
+          <h3>Respuestas por Cuestionario</h3>
+          <table class="questionnaire-stats-table">
+            <thead>
+              <tr>
+                <th>Cuestionario</th>
+                <th>Respuestas</th>
+                <th>Completados</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of datosGlobales.respuestasPorCuestionario">
+                <td>{{item.cuestionario}}</td>
+                <td>{{item.respuestas}}</td>
+                <td>{{item.completados}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Recomendaciones globales -->
+      <div class="global-recommendations">
+        <h3>Recomendaciones Globales</h3>
+        
+        <div class="recommendations-list">
+          <div class="global-risk-level">
+            <span class="risk-indicator" [ngStyle]="{'background-color': coloresRiesgo[obtenerNivelRiesgoPredominante()]}"></span>
+            Nivel de riesgo predominante: <strong>{{obtenerNivelRiesgoPredominante()}}</strong>
+          </div>
+          
+          <ul class="global-recommendations-list">
+            <li *ngFor="let rec of generarRecomendacionesGlobales(obtenerNivelRiesgoPredominante())">
+              {{rec}}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

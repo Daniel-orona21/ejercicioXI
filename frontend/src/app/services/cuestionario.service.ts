@@ -87,4 +87,9 @@ export class CuestionarioService {
   restaurarRespuestas(): Observable<any> {
     return this.http.post(`${this.apiUrl}/restaurar-respuestas`, {});
   }
+
+  // Obtener todas las respuestas de todos los usuarios (para estadísticas globales)
+  getAllRespuestasUsuarios(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/todas-respuestas`);
+  }
 } 
