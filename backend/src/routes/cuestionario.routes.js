@@ -12,6 +12,8 @@ router.get('/cuestionarios-with-questions', cuestionarioController.getAllCuestio
 // Rutas protegidas (requieren autenticación)
 router.get('/mis-cuestionarios', authMiddleware, cuestionarioController.getEstadoCuestionarios);
 router.get('/mis-cuestionarios/:id/respuestas', authMiddleware, cuestionarioController.getRespuestasCuestionario);
+router.get('/mis-respuestas', authMiddleware, cuestionarioController.getAllRespuestasUsuario);
+router.get('/mis-respuestas-detalladas', authMiddleware, cuestionarioController.getAllRespuestasDetalladasUsuario);
 
 // Rutas para respuestas
 router.post('/iniciar-cuestionario', authMiddleware, respuestaController.iniciarCuestionario);
@@ -19,5 +21,11 @@ router.post('/guardar-respuesta', authMiddleware, respuestaController.guardarRes
 router.post('/guardar-respuestas', authMiddleware, respuestaController.guardarRespuestas);
 router.post('/completar-cuestionario', authMiddleware, respuestaController.completarCuestionario);
 router.post('/reiniciar-cuestionarios', authMiddleware, cuestionarioController.reiniciarCuestionarios);
+
+// Ruta para corregir respuestas incorrectas
+router.post('/corregir-respuestas', authMiddleware, cuestionarioController.corregirRespuestasIncorrectas);
+
+// Ruta para reiniciar y restaurar todas las respuestas
+router.post('/restaurar-respuestas', authMiddleware, cuestionarioController.reiniciarYRestaurarRespuestas);
 
 module.exports = router; 

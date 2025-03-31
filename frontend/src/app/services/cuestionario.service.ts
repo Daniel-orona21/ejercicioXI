@@ -36,6 +36,16 @@ export class CuestionarioService {
     return this.http.get(`${this.apiUrl}/mis-cuestionarios/${id}/respuestas`);
   }
 
+  // Obtener todas las respuestas de todos los cuestionarios del usuario actual
+  getAllRespuestasUsuario(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mis-respuestas`);
+  }
+
+  // Obtener todas las respuestas detalladas (usando el JOIN completo)
+  getAllRespuestasDetalladasUsuario(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mis-respuestas-detalladas`);
+  }
+
   // Iniciar un cuestionario
   iniciarCuestionario(cuestionarioId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/iniciar-cuestionario`, { cuestionarioId });
@@ -66,5 +76,15 @@ export class CuestionarioService {
   // Reiniciar todos los cuestionarios para el usuario actual
   reiniciarCuestionarios(): Observable<any> {
     return this.http.post(`${this.apiUrl}/reiniciar-cuestionarios`, {});
+  }
+
+  // Corregir respuestas incorrectamente asociadas
+  corregirRespuestasIncorrectas(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/corregir-respuestas`, {});
+  }
+
+  // Reiniciar y restaurar correctamente todas las respuestas
+  restaurarRespuestas(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/restaurar-respuestas`, {});
   }
 } 
