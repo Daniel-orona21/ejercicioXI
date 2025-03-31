@@ -1,0 +1,200 @@
+<div class="ajustes-container">
+  <h1 class="page-title">Ajustes</h1>
+  
+  <div class="settings-layout">
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab-btn" [class.active]="activeTab === 'perfil'" (click)="setActiveTab('perfil')">
+          <i class="fas fa-user"></i> Perfil
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'notificaciones'" (click)="setActiveTab('notificaciones')">
+          <i class="fas fa-bell"></i> Notificaciones
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'seguridad'" (click)="setActiveTab('seguridad')">
+          <i class="fas fa-shield-alt"></i> Seguridad
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'apariencia'" (click)="setActiveTab('apariencia')">
+          <i class="fas fa-paint-brush"></i> Apariencia
+        </button>
+      </div>
+    </div>
+    
+    <div class="content-container">
+      <!-- Perfil Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'perfil'">
+        <h2 class="section-title">Información del Perfil</h2>
+        
+        <div class="profile-section">
+          <div class="profile-avatar">
+            <div class="avatar">
+              <img src="assets/images/avatar.jpg" alt="Profile Avatar">
+              <div class="avatar-overlay">
+                <i class="fas fa-camera"></i>
+              </div>
+            </div>
+            <button class="btn-change">Cambiar foto</button>
+          </div>
+          
+          <div class="profile-form">
+            <div class="form-group">
+              <label>Nombre completo</label>
+              <input type="text" value="{{user?.nombre || 'Usuario Demo'}}" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label>Correo electrónico</label>
+              <input type="email" value="{{user?.email || 'usuario@ejemplo.com'}}" class="form-control" readonly>
+              <small>Para cambiar tu correo, contacta al administrador</small>
+            </div>
+            
+            <div class="form-group">
+              <label>Puesto</label>
+              <input type="text" value="Analista de Riesgos" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label>Departamento</label>
+              <select class="form-control">
+                <option>Recursos Humanos</option>
+                <option>Operaciones</option>
+                <option>Finanzas</option>
+                <option>Tecnología</option>
+                <option>Marketing</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Biografía</label>
+              <textarea class="form-control" rows="3">Especialista en evaluación de factores de riesgo psicosocial con 5 años de experiencia en entornos corporativos.</textarea>
+            </div>
+            
+            <button class="btn-save" (click)="guardarAjustes()">Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Notificaciones Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'notificaciones'">
+        <h2 class="section-title">Configuración de Notificaciones</h2>
+        
+        <div class="notification-options">
+          <div class="notification-item">
+            <div class="item-description">
+              <h3>Notificaciones por correo</h3>
+              <p>Recibe actualizaciones y alertas en tu correo electrónico</p>
+            </div>
+            <div class="toggle-switch">
+              <input type="checkbox" id="email-toggle" [(ngModel)]="notificaciones.email">
+              <label for="email-toggle"></label>
+            </div>
+          </div>
+          
+          <div class="notification-item">
+            <div class="item-description">
+              <h3>Notificaciones del sistema</h3>
+              <p>Recibe alertas dentro de la plataforma</p>
+            </div>
+            <div class="toggle-switch">
+              <input type="checkbox" id="system-toggle" [(ngModel)]="notificaciones.sistema">
+              <label for="system-toggle"></label>
+            </div>
+          </div>
+          
+          <div class="notification-item">
+            <div class="item-description">
+              <h3>Reportes semanales</h3>
+              <p>Recibe un resumen semanal de actividades y estadísticas</p>
+            </div>
+            <div class="toggle-switch">
+              <input type="checkbox" id="reports-toggle" [(ngModel)]="notificaciones.reportes">
+              <label for="reports-toggle"></label>
+            </div>
+          </div>
+          
+          <div class="notification-item">
+            <div class="item-description">
+              <h3>Nuevos usuarios</h3>
+              <p>Notificaciones cuando se registren nuevos usuarios</p>
+            </div>
+            <div class="toggle-switch">
+              <input type="checkbox" id="users-toggle" [(ngModel)]="notificaciones.nuevosUsuarios">
+              <label for="users-toggle"></label>
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn-save" (click)="guardarAjustes()">Guardar cambios</button>
+      </div>
+      
+      <!-- Seguridad Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'seguridad'">
+        <h2 class="section-title">Seguridad de la Cuenta</h2>
+        
+        <div class="security-section">
+          <div class="form-group">
+            <label>Contraseña actual</label>
+            <input type="password" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label>Nueva contraseña</label>
+            <input type="password" class="form-control">
+            <small>La contraseña debe tener al menos 8 caracteres y contener letras, números y caracteres especiales</small>
+          </div>
+          
+          <div class="form-group">
+            <label>Confirmar nueva contraseña</label>
+            <input type="password" class="form-control">
+          </div>
+          
+          <div class="security-options">
+            <h3>Verificación en dos pasos</h3>
+            <p>Añade una capa adicional de seguridad a tu cuenta</p>
+            <button class="btn-secondary">Configurar verificación</button>
+          </div>
+          
+          <div class="security-options">
+            <h3>Sesiones activas</h3>
+            <p>Gestiona los dispositivos donde has iniciado sesión</p>
+            <button class="btn-secondary">Ver sesiones activas</button>
+          </div>
+          
+          <button class="btn-save" (click)="guardarAjustes()">Actualizar contraseña</button>
+        </div>
+      </div>
+      
+      <!-- Apariencia Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'apariencia'">
+        <h2 class="section-title">Personalización</h2>
+        
+        <div class="appearance-section">
+          <div class="appearance-item">
+            <div class="item-description">
+              <h3>Modo oscuro</h3>
+              <p>Cambia entre modo claro y oscuro</p>
+            </div>
+            <div class="toggle-switch">
+              <input type="checkbox" id="dark-toggle" [(ngModel)]="temaOscuro">
+              <label for="dark-toggle"></label>
+            </div>
+          </div>
+          
+          <div class="appearance-item">
+            <div class="item-description">
+              <h3>Idioma</h3>
+              <p>Selecciona el idioma de la interfaz</p>
+            </div>
+            <select class="form-control compact" [(ngModel)]="language">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="pt">Português</option>
+            </select>
+          </div>
+          
+          <button class="btn-save" (click)="guardarAjustes()">Guardar cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

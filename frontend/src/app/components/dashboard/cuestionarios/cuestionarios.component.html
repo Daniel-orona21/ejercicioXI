@@ -1,0 +1,269 @@
+<div class="cuestionarios-container">
+  <div class="page-header">
+    <h1 class="page-title">Cuestionarios</h1>
+    <button class="create-btn" (click)="reiniciarCuestionarios()" *ngIf="todosCompletados">
+      <i class="fas fa-sync-alt"></i> <span>Volver a Responder</span>
+    </button>
+  </div>
+  
+  <!-- Mensajes de notificación -->
+  <div class="mensaje-container" *ngIf="mensaje.show" [class.success]="mensaje.type === 'success'" [class.error]="mensaje.type === 'error'">
+    <i class="fas" [class.fa-check-circle]="mensaje.type === 'success'" [class.fa-exclamation-circle]="mensaje.type === 'error'"></i>
+    <span>{{ mensaje.text }}</span>
+  </div>
+  
+  <!-- Indicador de carga -->
+  <div class="overlay-loading" *ngIf="loading">
+    <div class="loader"></div>
+  </div>
+  
+  <!-- Mensaje cuando todos los cuestionarios están completados -->
+  <div class="evaluacion-completada" *ngIf="todosCompletados">
+    <div class="icon-container">
+      <i class="fas fa-check"></i>
+    </div>
+    <h2>¡Evaluación completada!</h2>
+    <p>Has completado exitosamente todos los cuestionarios de la evaluación de factores de riesgo psicosocial.</p>
+    <p>Tus respuestas han sido guardadas y serán analizadas por nuestro equipo.</p>
+    <button class="btn-primary" (click)="verResultados()">
+      <i class="fas fa-chart-bar"></i> Ver Resultados
+    </button>
+  </div>
+  
+  <!-- Contenido de los cuestionarios (visible solo si no están todos completados) -->
+  <div *ngIf="!todosCompletados">
+    <div class="cuestionario-tabs">
+      <div class="nav-tabs">
+        <button 
+          *ngFor="let tab of secuenciaCuestionarios; let i = index" 
+          class="tab-button" 
+          [class.active]="activeTab === tab" 
+          [class.completed]="estaCompletado(tab)"
+          [class.disabled]="i > 0 && !estaCompletado(secuenciaCuestionarios[i-1])"
+          (click)="i === 0 || estaCompletado(secuenciaCuestionarios[i-1]) ? setActiveTab(tab) : null">
+          
+          <span class="tab-status" *ngIf="estaCompletado(tab)">
+            <i class="fas fa-check-circle"></i>
+          </span>
+          
+          <span class="tab-number">{{ i + 1 }}</span>
+          
+          <span class="tab-name">
+            <ng-container [ngSwitch]="tab">
+              <ng-container *ngSwitchCase="'traumaticos'">Traumáticos Severos</ng-container>
+              <ng-container *ngSwitchCase="'factores'">Factores de Riesgo Psicosocial</ng-container>
+              <ng-container *ngSwitchCase="'entorno'">Entorno Organizacional</ng-container>
+            </ng-container>
+          </span>
+          
+          <div class="progress-indicator" *ngIf="!estaCompletado(tab)">
+            <div class="progress-bar" [style.width.%]="calcularProgreso(tab)"></div>
+          </div>
+        </button>
+      </div>
+    </div>
+    
+    <div class="cuestionario-content">
+      <!-- Cuestionario 1: Traumáticos Severos -->
+      <div class="cuestionario-panel scroll-container" *ngIf="activeTab === 'traumaticos'">
+        <div class="cuestionario-header">
+          <h2>Cuestionario de Traumáticos Severos</h2>
+          <p class="description">Identifique los eventos traumáticos que pudieran haber ocurrido en el entorno laboral.</p>
+        </div>
+        
+        <div class="instruction-panel">
+          <div class="icon">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div class="text">
+            <h3>Instrucciones:</h3>
+            <p>Responda las siguientes preguntas con "Sí" o "No" según su experiencia en el entorno laboral.</p>
+          </div>
+        </div>
+        
+        <div class="questions-container">
+          <div class="question-item" *ngFor="let pregunta of cuestionarios.traumaticos; let i = index">
+            <div class="question-number" [class.answered]="tieneRespuesta('traumaticos', i)">
+              {{i + 1}}
+              <i *ngIf="tieneRespuesta('traumaticos', i)" class="fas fa-check"></i>
+            </div>
+            <div class="question-text">
+              <p>{{pregunta}}</p>
+              <div class="options">
+                <label class="option-label">
+                  <input 
+                    type="radio" 
+                    name="traumatico_{{i}}" 
+                    value="si" 
+                    [checked]="respuestas.traumaticos[i] === 'si'"
+                    (change)="responderPregunta('traumaticos', i, 'si')"> Sí
+                </label>
+                <label class="option-label">
+                  <input 
+                    type="radio" 
+                    name="traumatico_{{i}}" 
+                    value="no" 
+                    [checked]="respuestas.traumaticos[i] === 'no'"
+                    (change)="responderPregunta('traumaticos', i, 'no')"> No
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="actions-panel">
+          <div class="progress-info">
+            <div class="progress-label">
+              <span>{{ cuestionariosEstado.traumaticos.respondidas }} de {{ cuestionariosEstado.traumaticos.total }} preguntas respondidas</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" [style.width.%]="calcularProgreso('traumaticos')"></div>
+            </div>
+          </div>
+          <div class="buttons-container">
+            <button 
+              class="btn-primary" 
+              [class.disabled]="!todasRespondidas()" 
+              [disabled]="!todasRespondidas() || loading"
+              (click)="finalizarCuestionario()">
+              <i class="fas" [ngClass]="esUltimoCuestionario() ? 'fa-check-circle' : 'fa-arrow-right'"></i> 
+              {{ esUltimoCuestionario() ? 'Finalizar' : 'Continuar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Cuestionario 2: Factores de Riesgo Psicosocial -->
+      <div class="cuestionario-panel scroll-container" *ngIf="activeTab === 'factores'">
+        <div class="cuestionario-header">
+          <h2>Evaluación de los Factores de Riesgo Psicosocial</h2>
+          <p class="description">Identifique los factores de riesgo psicosocial presentes en su entorno laboral.</p>
+        </div>
+        
+        <div class="instruction-panel">
+          <div class="icon">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div class="text">
+            <h3>Instrucciones:</h3>
+            <p>Marque la frecuencia con la que experimenta las siguientes situaciones en su entorno laboral.</p>
+            <p class="scale-info">Escala de respuestas: Nunca (1), Casi Nunca (2), A Veces (3), Casi Siempre (4), Siempre (5)</p>
+          </div>
+        </div>
+        
+        <div class="questions-container">
+          <div class="question-item" *ngFor="let pregunta of cuestionarios.factores; let i = index">
+            <div class="question-number" [class.answered]="tieneRespuesta('factores', i)">
+              {{i + 1}}
+              <i *ngIf="tieneRespuesta('factores', i)" class="fas fa-check"></i>
+            </div>
+            <div class="question-text">
+              <p>{{pregunta}}</p>
+              <div class="likert-scale">
+                <label 
+                  *ngFor="let valor of [1, 2, 3, 4, 5]; let v = index" 
+                  class="scale-option"
+                  [class.selected]="respuestas.factores[i] === valor.toString()">
+                  <input 
+                    type="radio" 
+                    name="factor_{{i}}" 
+                    [value]="valor"
+                    [checked]="respuestas.factores[i] === valor.toString()"
+                    (change)="responderPregunta('factores', i, valor.toString())">
+                  <span>{{valor}}</span>
+                  <small>{{ v === 0 ? 'Nunca' : v === 1 ? 'Casi Nunca' : v === 2 ? 'A Veces' : v === 3 ? 'Casi Siempre' : 'Siempre' }}</small>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="actions-panel">
+          <div class="progress-info">
+            <div class="progress-label">
+              <span>{{ cuestionariosEstado.factores.respondidas }} de {{ cuestionariosEstado.factores.total }} preguntas respondidas</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" [style.width.%]="calcularProgreso('factores')"></div>
+            </div>
+          </div>
+          <div class="buttons-container">
+            <button 
+              class="btn-primary" 
+              [class.disabled]="!todasRespondidas()" 
+              [disabled]="!todasRespondidas() || loading"
+              (click)="finalizarCuestionario()">
+              <i class="fas" [ngClass]="esUltimoCuestionario() ? 'fa-check-circle' : 'fa-arrow-right'"></i> 
+              {{ esUltimoCuestionario() ? 'Finalizar' : 'Continuar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Cuestionario 3: Entorno Organizacional -->
+      <div class="cuestionario-panel scroll-container" *ngIf="activeTab === 'entorno'">
+        <div class="cuestionario-header">
+          <h2>Evaluación del Entorno Organizacional</h2>
+          <p class="description">Evalúe diferentes aspectos del entorno organizacional de su empresa.</p>
+        </div>
+        
+        <div class="instruction-panel">
+          <div class="icon">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div class="text">
+            <h3>Instrucciones:</h3>
+            <p>Marque la opción que mejor represente su situación laboral.</p>
+          </div>
+        </div>
+        
+        <div class="questions-container">
+          <div class="question-item" *ngFor="let pregunta of cuestionarios.entorno; let i = index">
+            <div class="question-number" [class.answered]="tieneRespuesta('entorno', i)">
+              {{i + 1}}
+              <i *ngIf="tieneRespuesta('entorno', i)" class="fas fa-check"></i>
+            </div>
+            <div class="question-text">
+              <p>{{pregunta.texto}}</p>
+              <div class="custom-options">
+                <label 
+                  class="custom-option" 
+                  *ngFor="let opcion of pregunta.opciones"
+                  [class.selected]="respuestas.entorno[i] === opcion">
+                  <input 
+                    type="radio" 
+                    name="entorno_{{i}}" 
+                    [value]="opcion"
+                    [checked]="respuestas.entorno[i] === opcion"
+                    (change)="responderPregunta('entorno', i, opcion)">
+                  <span>{{opcion}}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="actions-panel">
+          <div class="progress-info">
+            <div class="progress-label">
+              <span>{{ cuestionariosEstado.entorno.respondidas }} de {{ cuestionariosEstado.entorno.total }} preguntas respondidas</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" [style.width.%]="calcularProgreso('entorno')"></div>
+            </div>
+          </div>
+          <div class="buttons-container">
+            <button 
+              class="btn-primary" 
+              [class.disabled]="!todasRespondidas()" 
+              [disabled]="!todasRespondidas() || loading"
+              (click)="finalizarCuestionario()">
+              <i class="fas" [ngClass]="esUltimoCuestionario() ? 'fa-check-circle' : 'fa-arrow-right'"></i> 
+              {{ esUltimoCuestionario() ? 'Finalizar' : 'Continuar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

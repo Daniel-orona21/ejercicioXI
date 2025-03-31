@@ -1,0 +1,141 @@
+<div class="results-container">
+  <h1 class="page-title">Resultados</h1>
+  
+  <div class="summary-cards">
+    <div class="row">
+      <div class="card">
+        <div class="card-content">
+          <div class="number primary">{{summaryData.pendingTasks}}</div>
+          <div class="label">Tareas Pendientes</div>
+        </div>
+        <div class="card-footer">
+          Completadas: {{summaryData.completedTasks}}
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-content">
+          <div class="number danger">{{summaryData.overdueTasks}}</div>
+          <div class="label">Tareas Atrasadas</div>
+        </div>
+        <div class="card-footer">
+          Desde ayer: {{summaryData.yesterday}}
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-content">
+          <div class="number warning">{{summaryData.openIssues}}</div>
+          <div class="label">Problemas Abiertos</div>
+        </div>
+        <div class="card-footer">
+          Cerrados hoy: {{summaryData.closedToday}}
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-content">
+          <div class="number success">{{summaryData.proposals}}</div>
+          <div class="label">Propuestas</div>
+        </div>
+        <div class="card-footer">
+          Implementadas: {{summaryData.implemented}}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="data-section">
+    <div class="section-header">
+      <h2>Resumen de Factores de Riesgo</h2>
+      <div class="date-selector">
+        <button class="date-btn active">Esta Semana</button>
+        <button class="date-btn">Semana Anterior</button>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart">
+        <!-- Aquí iría el gráfico -->
+        <div class="placeholder-chart">
+          <div class="chart-bar" style="height: 70%"></div>
+          <div class="chart-bar" style="height: 90%"></div>
+          <div class="chart-bar" style="height: 50%"></div>
+          <div class="chart-bar" style="height: 80%"></div>
+          <div class="chart-bar" style="height: 60%"></div>
+        </div>
+      </div>
+      
+      <div class="stats-container">
+        <div class="stat-box">
+          <div class="stat-number">214</div>
+          <div class="stat-label">Evaluaciones Completadas</div>
+        </div>
+        
+        <div class="stat-box">
+          <div class="stat-number">75</div>
+          <div class="stat-label">Factores Identificados</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="table-section">
+    <h2>Últimas Evaluaciones</h2>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Empleado</th>
+          <th>Área</th>
+          <th>Nivel de Riesgo</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>#FR001</td>
+          <td>10 Ago 2023</td>
+          <td>María González</td>
+          <td>Recursos Humanos</td>
+          <td><span class="badge high">Alto</span></td>
+          <td><span class="status completed">Completado</span></td>
+        </tr>
+        <tr>
+          <td>#FR002</td>
+          <td>12 Ago 2023</td>
+          <td>Juan Pérez</td>
+          <td>Finanzas</td>
+          <td><span class="badge medium">Medio</span></td>
+          <td><span class="status completed">Completado</span></td>
+        </tr>
+        <tr>
+          <td>#FR003</td>
+          <td>15 Ago 2023</td>
+          <td>Ana Martínez</td>
+          <td>Operaciones</td>
+          <td><span class="badge low">Bajo</span></td>
+          <td><span class="status completed">Completado</span></td>
+        </tr>
+        <tr>
+          <td>#FR004</td>
+          <td>18 Ago 2023</td>
+          <td>Carlos Rodríguez</td>
+          <td>Tecnología</td>
+          <td><span class="badge high">Alto</span></td>
+          <td><span class="status pending">Pendiente</span></td>
+        </tr>
+        <tr>
+          <td>#FR005</td>
+          <td>20 Ago 2023</td>
+          <td>Laura Sánchez</td>
+          <td>Marketing</td>
+          <td><span class="badge medium">Medio</span></td>
+          <td><span class="status in-progress">En Progreso</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

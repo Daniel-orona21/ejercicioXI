@@ -1,6 +1,6 @@
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -11,6 +11,12 @@ interface AuthResponse {
     email: string;
   };
   token: string;
+}
+
+interface User {
+  id: number;
+  nombre: string;
+  email: string;
 }
 
 @Injectable({
@@ -67,5 +73,27 @@ export class AuthService {
   getToken(): string | null {
     if (!this.isBrowser) return null;
     return localStorage.getItem('token');
+  }
+  
+  // Obtener los datos del usuario actual
+  getUserData(): Observable<User | null> {
+    if (!this.isBrowser) return of(null);
+    
+    const userData = localStorage.getItem('currentUser');
+    if (userData) {
+      return of(JSON.parse(userData));
+    }
+    
+    // Si no hay datos en localStorage pero hay un token, intentar obtener los datos del servidor
+    if (this.getToken()) {
+      return this.http.get<User>(`${environment.apiUrl}/users/me`).pipe(
+        tap(user => {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+        })
+      );
+    }
+    
+    return of(null);
   }
 }

@@ -1,0 +1,79 @@
+<div class="dashboard-layout" [class.collapsed]="isSidebarCollapsed">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo-container">
+      <div class="logo">
+        <img src="logo.png" alt="Logo">
+      </div>
+      <button class="collapse-button" (click)="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    
+    <div class="user-profile">
+      <div class="profile-image">
+        <img src="assets/images/avatar.jpg" alt="User Profile">
+      </div>
+      <div class="user-info" *ngIf="!isSidebarCollapsed">
+        <h3 class="user-name">{{user?.nombre || 'Usuario'}}</h3>
+        <p class="user-email">{{user?.email || 'usuario@ejemplo.com'}}</p>
+      </div>
+    </div>
+    
+    <nav class="nav-menu">
+      <ul>
+        <li [routerLink]="['/dashboard/resultados']" routerLinkActive="active">
+          <div class="nav-item">
+            <i class="fas fa-chart-bar"></i>
+            <span *ngIf="!isSidebarCollapsed">Resultados</span>
+          </div>
+        </li>
+        <li [routerLink]="['/dashboard/cuestionarios']" routerLinkActive="active">
+          <div class="nav-item">
+            <i class="fas fa-tasks"></i>
+            <span *ngIf="!isSidebarCollapsed">Cuestionarios</span>
+          </div>
+        </li>
+        <li [routerLink]="['/dashboard/ajustes']" routerLinkActive="active">
+          <div class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span *ngIf="!isSidebarCollapsed">Ajustes</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+    
+    <div class="logout-container">
+      <button class="logout-button" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span *ngIf="!isSidebarCollapsed">Cerrar sesión</span>
+      </button>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="main-content-inner">
+      <header class="top-header">
+        <div class="header-left">
+          <h1 class="welcome-message">Bienvenido, {{user?.nombre || 'Usuario'}}!</h1>
+          <p class="notifications">
+            <i class="fas fa-bell"></i> Tienes 2 nuevos mensajes y 15 nuevas tareas
+          </p>
+        </div>
+        <div class="header-right">
+          <button class="header-button">
+            <i class="fas fa-envelope"></i> Mensajes
+          </button>
+          <button class="header-button">
+            <i class="fas fa-cog"></i> Configuración
+          </button>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </main>
+</div>
