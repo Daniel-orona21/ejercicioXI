@@ -512,9 +512,9 @@ export class ResultadosComponent implements OnInit, OnDestroy {
   // Método para obtener el rango de puntaje para cada nivel de riesgo
   obtenerRangoRiesgo(nivelRiesgo: string): string {
     switch(nivelRiesgo) {
-      case 'Bajo': return '0-10 puntos';
-      case 'Moderado': return '11-20 puntos';
-      case 'Alto': return '21+ puntos';
+      case 'Bajo': return '(0-10 puntos)';
+      case 'Moderado': return '(11-20 puntos)';
+      case 'Alto': return '(21+ puntos)';
       default: return '';
     }
   }
