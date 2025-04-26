@@ -29,11 +29,11 @@
             </div>
             <h2>Evaluación de Factores de Riesgo Psicosocial</h2>
             <div class="pregunta-progress">
-              <p>Pregunta {{ preguntaActual + 1 }} de {{ preguntas && preguntas.length ? preguntas.length : 0 }}</p>
+              <p>Pregunta {{ preguntaActual + 1 }} de {{ progreso.preguntasVisible }}</p>
               <div class="progress-container">
                 <div class="progress-bar" [ngStyle]="{
-                  'width': (preguntaActual + 1) / (preguntas && preguntas.length ? preguntas.length : 1) * 100 + '%',
-                  'background': getColorGradient((preguntaActual + 1) / (preguntas && preguntas.length ? preguntas.length : 1) * 100)
+                  'width': (preguntaActual + 1) / (progreso.preguntasVisible || 1) * 100 + '%',
+                  'background': getColorGradient((preguntaActual + 1) / (progreso.preguntasVisible || 1) * 100)
                 }"></div>
               </div>
             </div>
@@ -44,12 +44,11 @@
             <div class="pregunta-content">
               <h3 class="pregunta-texto">
                 {{ preguntas[preguntaActual].texto }}
-                <!-- Destacar la pregunta si es "Soy jefe" -->
               </h3>
               
               <div class="opciones-container">
                 <!-- Opciones normales (5 opciones) para preguntas regulares -->
-                <ng-container *ngIf="preguntas[preguntaActual] && preguntas[preguntaActual].orden !== 68">
+                <ng-container *ngIf="preguntas[preguntaActual] && preguntas[preguntaActual].orden !== 65 && preguntas[preguntaActual].orden !== 70">
                   <div 
                     *ngFor="let opcion of opcionesRespuesta" 
                     class="opcion-item"
@@ -63,8 +62,8 @@
                   </div>
                 </ng-container>
                 
-                <!-- Solo 2 opciones (Sí/No) para la pregunta "Soy jefe" -->
-                <ng-container *ngIf="preguntas[preguntaActual] && preguntas[preguntaActual].orden === 68">
+                <!-- Solo 2 opciones (Sí/No) para las preguntas 65 y 70 -->
+                <ng-container *ngIf="preguntas[preguntaActual] && (preguntas[preguntaActual].orden === 65 || preguntas[preguntaActual].orden === 70)">
                   <div class="opciones-si-no">
                     <!-- Opción SÍ -->
                     <div 
@@ -102,35 +101,20 @@
             </button>
             
             <div class="navegacion-info">
-              <p>{{ preguntaActual + 1 }} de {{ preguntas && preguntas.length ? preguntas.length : 0 }}</p>
+              <p>{{ preguntaActual + 1 }} de {{ progreso.preguntasVisible }}</p>
               <p class="navegacion-secundaria">{{ progreso.totalRespondidas }} preguntas respondidas</p>
             </div>
             
-            <!-- Solo mostrar el botón "Siguiente" si NO es la pregunta "Soy jefe", ya que esa se maneja de forma especial -->
-            <ng-container *ngIf="preguntas[preguntaActual] && preguntas[preguntaActual].orden !== 68">
-              <button 
-                mat-raised-button 
-                color="primary" 
-                [disabled]="!respuestasSeleccionadas[preguntas[preguntaActual].id]"
-                (click)="guardarRespuesta(preguntas[preguntaActual].id, respuestasSeleccionadas[preguntas[preguntaActual].id])"
-                style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 8px;"
-              >
-                Siguiente <span style="margin-left: 4px; font-size: 24px; line-height: 24px;">→</span>
-              </button>
-            </ng-container>
-            
-            <!-- Para la pregunta "Soy jefe", mostrar botón especial -->
-            <ng-container *ngIf="preguntas[preguntaActual] && preguntas[preguntaActual].orden === 68">
-              <button 
-                mat-raised-button 
-                color="primary" 
-                [disabled]="!respuestasSeleccionadas[preguntas[preguntaActual].id]"
-                (click)="guardarRespuesta(preguntas[preguntaActual].id, respuestasSeleccionadas[preguntas[preguntaActual].id])"
-              >
-                <span *ngIf="guardando">Procesando...</span>
-                <span *ngIf="!guardando">Continuar</span>
-              </button>
-            </ng-container>
+            <!-- Botón Siguiente para todas las preguntas -->
+            <button 
+              mat-raised-button 
+              color="primary" 
+              [disabled]="!respuestasSeleccionadas[preguntas[preguntaActual].id]"
+              (click)="guardarRespuesta(preguntas[preguntaActual].id, respuestasSeleccionadas[preguntas[preguntaActual].id])"
+              style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 8px;"
+            >
+              Siguiente <span style="margin-left: 4px; font-size: 24px; line-height: 24px;">→</span>
+            </button>
           </div>
         </div>
       </ng-container>
@@ -162,13 +146,13 @@
           
           <div class="progress-bar-container">
             <div class="progress-label">
-              <span><strong>{{ progreso.totalRespondidas }}</strong> de <strong>{{ progreso.totalAResponder }}</strong> preguntas</span>
-              <span class="progress-percentage">{{progreso.porcentajeTotal}}%</span>
+              <span><strong>{{ progreso.totalRespondidas }}</strong> de <strong>{{ progreso.totalRespondidas }}</strong> preguntas</span>
+              <span class="progress-percentage">100%</span>
             </div>
             <div class="progress-container">
               <div class="progress-bar" [ngStyle]="{
-                'width': progreso.porcentajeTotal + '%',
-                'background': getColorGradient(progreso.porcentajeTotal)
+                'width': '100%',
+                'background': getColorGradient(100)
               }"></div>
             </div>
           </div>

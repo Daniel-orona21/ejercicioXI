@@ -27,25 +27,13 @@ const CuestionarioController = {
     try {
       const usuarioId = req.userId; // Obtenido del middleware de autenticación
       
-      // Obtener todas las preguntas obligatorias
-      const preguntasObligatorias = await Pregunta.getObligatorias();
-      
-      // Verificar si el usuario ha respondido que es jefe
-      const esJefe = await RespuestaUsuario.esUsuarioJefe(usuarioId);
-      
-      let preguntas = preguntasObligatorias;
-      
-      // Si el usuario es jefe, agregar las preguntas opcionales
-      if (esJefe) {
-        const preguntasOpcionales = await Pregunta.getOpcionales();
-        preguntas = [...preguntasObligatorias, ...preguntasOpcionales];
-      }
+      // Obtener todas las preguntas sin filtrar por es_opcional
+      const preguntas = await Pregunta.getAll();
       
       res.json({
         success: true,
         data: preguntas,
         metadata: {
-          esJefe: esJefe,
           totalPreguntas: preguntas.length
         }
       });

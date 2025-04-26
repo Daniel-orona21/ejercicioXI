@@ -68,13 +68,13 @@ const RespuestaUsuario = {
   // Verificar si un usuario ha respondido que es jefe
   esUsuarioJefe: async (usuarioId) => {
     try {
-      // Consulta para obtener la respuesta a la pregunta 68 (¿Soy jefe de otros trabajadores?)
+      // Consulta para obtener la respuesta a la pregunta 70 (¿Soy jefe de otros trabajadores?)
       const query = `
         SELECT ru.*, op.texto as respuesta_texto, op.valor as respuesta_valor
         FROM respuestas_usuario ru
         JOIN preguntas p ON ru.pregunta_id = p.id
         JOIN opciones_respuesta op ON ru.opcion_respuesta_id = op.id
-        WHERE ru.usuario_id = ? AND p.orden = 68
+        WHERE ru.usuario_id = ? AND p.orden = 70
       `;
       const [rows] = await db.query(query, [usuarioId]);
       if (rows.length === 0) return false;
@@ -124,12 +124,12 @@ const RespuestaUsuario = {
         FROM respuestas_usuario ru
         JOIN preguntas p ON ru.pregunta_id = p.id
         JOIN opciones_respuesta op ON ru.opcion_respuesta_id = op.id
-        WHERE ru.usuario_id = ? AND p.orden = 68
+        WHERE ru.usuario_id = ? AND p.orden = 70
       `;
       
       const [rows2] = await db.query(query2, [usuarioId]);
       
-      // Determinar si el usuario es jefe basado en su respuesta a la pregunta 68
+      // Determinar si el usuario es jefe basado en su respuesta a la pregunta 70
       let esJefe = false;
       if (rows2.length > 0) {
         esJefe = rows2[0].respuesta_valor >= 3; // Valores 3 y 4 corresponden a "Casi siempre" y "Siempre"

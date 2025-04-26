@@ -49,8 +49,8 @@ const Pregunta = {
   // Verificar si una pregunta es la que pregunta si es jefe
   esJefePregunta: async (id) => {
     try {
-      // La pregunta 68 es "Soy jefe de otros trabajadores"
-      const query = 'SELECT * FROM preguntas WHERE orden = 68';
+      // La pregunta 70 es "Soy jefe de otros trabajadores:"
+      const query = 'SELECT * FROM preguntas WHERE orden = 70';
       const [rows] = await db.query(query);
       return rows.length ? rows[0].id === parseInt(id) : false;
     } catch (error) {

@@ -47,11 +47,12 @@ export class CuestionariosComponent implements OnInit {
   respuestasSeleccionadas: { [key: number]: number } = {};
   respuestasPendientesDeGuardar: { preguntaId: number, opcionRespuestaId: number }[] = [];
   preguntaActual = 0;
+  preguntaAnteriorAlSalto = 0; // Track the question before a skip
   progreso = {
     porcentajeTotal: 0,
     totalRespondidas: 0,
     totalAResponder: 0,
-    esJefe: false
+    preguntasVisible: 0  // Add a property to track visible questions
   };
   
   // Usuario actual
@@ -135,13 +136,10 @@ export class CuestionariosComponent implements OnInit {
         if (response && response.success) {
           console.log('Preguntas obtenidas de la base de datos:', response.data);
           this.preguntas = response.data;
-          this.progreso.totalAResponder = this.preguntas.length;
           
-          // Verificar si alguna de las preguntas es "Soy jefe"
-          const preguntaJefe = this.preguntas.find(p => p.orden === 68);
-          if (preguntaJefe) {
-            console.log('Pregunta "Soy jefe" identificada:', preguntaJefe);
-          }
+          // Inicializar con las 64 preguntas obligatorias + 2 preguntas condicionales (65 y 70)
+          this.progreso.totalAResponder = 66;
+          this.progreso.preguntasVisible = 66;
           
           this.actualizarProgreso();
         } else {
@@ -192,7 +190,9 @@ export class CuestionariosComponent implements OnInit {
         }
         
         // Actualizar el total de preguntas a responder
-        this.progreso.totalAResponder = this.preguntas.length;
+        // Inicializar con las 64 preguntas obligatorias + 2 preguntas condicionales (65 y 70)
+        this.progreso.totalAResponder = 66;
+        this.progreso.preguntasVisible = 66;
         
         // Obtener opciones de respuesta
         return this.cuestionarioService.getOpcionesRespuestaPromise();
@@ -248,6 +248,28 @@ export class CuestionariosComponent implements OnInit {
             }
           }
           
+          // Verificar respuestas a preguntas condicionales
+          const pregunta65 = preguntasOrdenadas.find(p => p.orden === 65);
+          const pregunta70 = preguntasOrdenadas.find(p => p.orden === 70);
+          
+          // Verificar si respondió "No" a la pregunta 65
+          if (pregunta65 && this.respuestasSeleccionadas[pregunta65.id] === 5) {
+            // Si respondió "No" a la pregunta 65, debe continuar desde la pregunta 70 o posterior
+            if (pregunta70) {
+              const indicePregunta70 = preguntasOrdenadas.findIndex(p => p.orden === 70);
+              if (ultimaPreguntaRespondida < indicePregunta70) {
+                ultimaPreguntaRespondida = indicePregunta70;
+              }
+            }
+          }
+          
+          // Verificar si respondió "No" a la pregunta 70
+          if (pregunta70 && this.respuestasSeleccionadas[pregunta70.id] === 5) {
+            // Si respondió "No" a la pregunta 70, el cuestionario está completo
+            this.cuestionarioCompletado = true;
+            this.mostrandoCuestionario = false;
+          }
+          
           // Posicionar en la siguiente pregunta a la última respondida
           this.preguntaActual = Math.min(ultimaPreguntaRespondida + 1, this.preguntas.length - 1);
         }
@@ -271,16 +293,19 @@ export class CuestionariosComponent implements OnInit {
   guardarRespuesta(preguntaId: number, opcionId: number): void {
     this.respuestasSeleccionadas[preguntaId] = opcionId;
     
-    // Identificar si es la pregunta "Soy jefe"
+    // Identificar si es una pregunta de Sí/No
     const preguntaActual = this.preguntas[this.preguntaActual];
-    const esPreguntaJefe = preguntaActual && preguntaActual.orden === 68;
+    const esPreguntaSiNo = preguntaActual && (
+      preguntaActual.orden === 65 || // Primera pregunta Sí/No
+      preguntaActual.orden === 70    // Segunda pregunta Sí/No
+    );
     
-    // Para la pregunta de jefe, convertir Sí/No a los valores de opciones_respuesta
+    // Para preguntas de Sí/No, convertir a los valores de opciones_respuesta
     let opcionRespuestaId = opcionId;
-    if (esPreguntaJefe) {
+    if (esPreguntaSiNo) {
       // Si respondió "Sí" (opcionId=1), usar valor de "Siempre" (id=1, valor=4)
       // Si respondió "No" (opcionId=5), usar valor de "Nunca" (id=5, valor=0)
-      console.log(`Respuesta a pregunta "Soy jefe": ${opcionId === 1 ? 'SÍ' : 'NO'}`);
+      console.log(`Respuesta a pregunta Sí/No (orden=${preguntaActual.orden}): ${opcionId === 1 ? 'SÍ' : 'NO'}`);
     }
     
     // Agregar la respuesta a la lista de pendientes de guardar
@@ -294,44 +319,48 @@ export class CuestionariosComponent implements OnInit {
     
     this.actualizarProgreso();
     
-    // Si es la pregunta "Soy jefe", esperamos la respuesta del servidor antes de avanzar
-    if (esPreguntaJefe) {
-      // No avanzamos automáticamente, esperamos la respuesta del backend
-      console.log("Esperando respuesta del servidor para la pregunta 'Soy jefe'...");
-      
-      // Si respondió "No", finalizamos el cuestionario
-      if (opcionId === 5) {
-        this.cuestionarioCompletado = true;
-        this.mostrandoCuestionario = false;
-        console.log("Cuestionario completado porque respondió 'No' a ser jefe");
-        return;
+    // Lógica para saltar preguntas
+    if (preguntaActual.orden === 65 && opcionId === 5) {
+      // Si responde "No" a la pregunta 65, saltar a la pregunta 70
+      // Buscar el índice de la pregunta con orden 70
+      const indiceDestino = this.preguntas.findIndex(p => p.orden === 70);
+      if (indiceDestino !== -1) {
+        this.preguntaAnteriorAlSalto = this.preguntaActual;
+        this.preguntaActual = indiceDestino;
+        return; // Salir del método para evitar el avance normal
       }
-      
-      return;
+    } else if (preguntaActual.orden === 70 && opcionId === 5) {
+      // Si responde "No" a la pregunta 70, finalizar el cuestionario
+      this.cuestionarioCompletado = true;
+      this.mostrandoCuestionario = false;
+      // Forzar a 100% cuando se completa
+      this.progreso.porcentajeTotal = 100;
+      // Guardar todas las respuestas pendientes
+      if (this.respuestasPendientesDeGuardar.length > 0) {
+        this.guardarTodasLasRespuestas();
+      }
+      return; // Salir del método para evitar el avance normal
     }
     
     // Verificar si es la última pregunta
     if (this.preguntaActual < this.preguntas.length - 1) {
       this.preguntaActual++;
     } else {
-      // Marcar como completado si se respondieron todas las preguntas
-      if (this.progreso.porcentajeTotal === 100) {
-        this.cuestionarioCompletado = true;
-        this.mostrandoCuestionario = false;
-        // Guardar todas las respuestas pendientes si hay alguna
-        if (this.respuestasPendientesDeGuardar.length > 0) {
-          this.guardarTodasLasRespuestas();
-        }
+      // Última pregunta contestada (pregunta 74 o última del array)
+      // Marcar como completado sin importar el porcentaje
+      this.cuestionarioCompletado = true;
+      this.mostrandoCuestionario = false;
+      // Forzar a 100% cuando se completa
+      this.progreso.porcentajeTotal = 100;
+      // Guardar todas las respuestas pendientes si hay alguna
+      if (this.respuestasPendientesDeGuardar.length > 0) {
+        this.guardarTodasLasRespuestas();
       }
     }
   }
   
   guardarRespuestaEnBackend(preguntaId: number, opcionId: number): void {
     this.guardando = true;
-    
-    // Identificar si es la pregunta "Soy jefe"
-    const preguntaActual = this.preguntas.find(p => p.id === preguntaId);
-    const esPreguntaJefe = preguntaActual && preguntaActual.orden === 68;
     
     // Usar el método estándar que utiliza el token de autenticación
     this.cuestionarioService.guardarRespuesta(preguntaId, opcionId).subscribe({
@@ -343,49 +372,6 @@ export class CuestionariosComponent implements OnInit {
           this.respuestasPendientesDeGuardar = this.respuestasPendientesDeGuardar.filter(
             r => r.preguntaId !== preguntaId
           );
-          
-          // Si la respuesta es para la pregunta "Soy jefe", actualizar el estado
-          if (esPreguntaJefe && response.metadata && response.metadata.esJefe !== undefined) {
-            this.progreso.esJefe = response.metadata.esJefe;
-            console.log("Respuesta a pregunta 'Soy jefe':", response.metadata.esJefe ? "Sí es jefe" : "No es jefe");
-            
-            // Si el usuario respondió "Sí" y hay preguntas adicionales, mostrarlas
-            if (response.metadata.esJefe && 
-                response.metadata.mostrarPreguntasAdicionales && 
-                response.metadata.preguntasAdicionales && 
-                response.metadata.preguntasAdicionales.length > 0) {
-              
-              console.log("Mostrando preguntas adicionales:", response.metadata.preguntasAdicionales.length);
-              
-              // Añadir las preguntas adicionales solo si no existen ya
-              const preguntasNuevas = response.metadata.preguntasAdicionales.filter(
-                (nuevaPregunta: any) => !this.preguntas.some(p => p.id === nuevaPregunta.id)
-              );
-              
-              if (preguntasNuevas.length > 0) {
-                this.preguntas = [...this.preguntas, ...preguntasNuevas];
-                this.progreso.totalAResponder = this.preguntas.length;
-                this.actualizarProgreso();
-                console.log("Preguntas añadidas. Total preguntas ahora:", this.preguntas.length);
-              }
-              
-              // Avanzar a la siguiente pregunta si respondió "Sí"
-              this.preguntaActual++;
-              console.log("Avanzando a la siguiente pregunta:", this.preguntaActual);
-            } 
-            // Si el usuario respondió "No", no mostramos preguntas adicionales
-            else if (!response.metadata.esJefe) {
-              // Ya manejamos esto en guardarRespuesta
-              console.log("No se mostrarán preguntas adicionales porque no es jefe");
-            }
-          } else if (esPreguntaJefe) {
-            // Si es la pregunta de jefe pero no vino la metadata esperada
-            console.error("Error: No se recibió la metadata esperada para la pregunta 'Soy jefe'");
-            // Si respondió "Sí", avanzamos igualmente para no bloquear al usuario
-            if (opcionId === 1) {
-              this.preguntaActual++;
-            }
-          }
           
           // Actualizar el progreso con los datos del servidor si están disponibles
           if (response.metadata && response.metadata.progreso) {
@@ -436,13 +422,87 @@ export class CuestionariosComponent implements OnInit {
   }
   
   actualizarProgreso(): void {
+    // Contar respuestas dadas
     this.progreso.totalRespondidas = Object.keys(this.respuestasSeleccionadas).length;
-    this.progreso.porcentajeTotal = this.progreso.totalAResponder > 0 
-      ? Math.round((this.progreso.totalRespondidas / this.progreso.totalAResponder) * 100)
-      : 0;
+    
+    // La base son 64 preguntas obligatorias (preguntas 1-64)
+    // Preguntas 65 y 70 son condicionales (2 preguntas)
+    // Preguntas 66-69 solo se muestran si respondió Sí a 65 (4 preguntas)
+    // Preguntas 71-74 solo se muestran si respondió Sí a 70 (4 preguntas)
+    
+    // Partimos de la base de 64 preguntas obligatorias
+    let preguntasRequeridas = 64;
+    
+    // Siempre sumamos las preguntas condicionales (65 y 70)
+    preguntasRequeridas += 2;
+    
+    // Verificar respuesta a pregunta 65
+    const pregunta65 = this.preguntas.find(p => p.orden === 65);
+    if (pregunta65 && this.respuestasSeleccionadas[pregunta65.id] === 1) {
+      // Si respondió "Sí" a pregunta 65, sumar 4 preguntas (66-69)
+      preguntasRequeridas += 4;
+    }
+    
+    // Verificar respuesta a pregunta 70
+    const pregunta70 = this.preguntas.find(p => p.orden === 70);
+    if (pregunta70 && this.respuestasSeleccionadas[pregunta70.id] === 1) {
+      // Si respondió "Sí" a pregunta 70, sumar 4 preguntas (71-74)
+      preguntasRequeridas += 4;
+    }
+    
+    // Actualizar el total a responder con base en la lógica condicional
+    this.progreso.totalAResponder = preguntasRequeridas;
+    this.progreso.preguntasVisible = preguntasRequeridas;
+    
+    // Calcular el porcentaje de progreso basado en las preguntas requeridas
+    if (preguntasRequeridas > 0) {
+      this.progreso.porcentajeTotal = Math.round((this.progreso.totalRespondidas / preguntasRequeridas) * 100);
+      
+      // Asegurarse de que el porcentaje no exceda 100%
+      if (this.progreso.porcentajeTotal > 100) {
+        this.progreso.porcentajeTotal = 100;
+      }
+    } else {
+      this.progreso.porcentajeTotal = 0;
+    }
+      
+    // Si el porcentaje es 100% o si respondió la última pregunta requerida, marcar como completado
+    if (this.progreso.porcentajeTotal >= 100) {
+      this.cuestionarioCompletado = true;
+      this.progreso.porcentajeTotal = 100;
+    }
+    // Si el progreso es muy alto (95% o más), también considerarlo como completado
+    else if (this.progreso.porcentajeTotal >= 95) {
+      this.cuestionarioCompletado = true;
+      this.progreso.porcentajeTotal = 100;
+    }
+    
+    console.log('Progreso actualizado:', {
+      totalRespondidas: this.progreso.totalRespondidas,
+      totalAResponder: this.progreso.totalAResponder,
+      preguntasVisible: this.progreso.preguntasVisible,
+      porcentajeTotal: this.progreso.porcentajeTotal
+    });
   }
   
   preguntaAnterior(): void {
+    // Si estamos en pregunta 70 y venimos de un salto desde pregunta 65
+    const preguntaActualObj = this.preguntas[this.preguntaActual];
+    
+    if (preguntaActualObj && preguntaActualObj.orden === 70) {
+      // Verificar si hay respuesta "No" en pregunta 65
+      const pregunta65 = this.preguntas.find(p => p.orden === 65);
+      if (pregunta65 && this.respuestasSeleccionadas[pregunta65.id] === 5) {
+        // Volver a la pregunta 65 directamente
+        const indice65 = this.preguntas.findIndex(p => p.orden === 65);
+        if (indice65 !== -1) {
+          this.preguntaActual = indice65;
+          return;
+        }
+      }
+    }
+    
+    // Caso normal: retroceder una pregunta
     if (this.preguntaActual > 0) {
       this.preguntaActual--;
     }
@@ -475,9 +535,11 @@ export class CuestionariosComponent implements OnInit {
             ...response.data
           };
           
-          // Verificar si completó la evaluación (100%)
-          if (this.progreso.porcentajeTotal === 100) {
+          // Si el progreso es mayor o igual a 90%, considerarlo como completado
+          // y forzar a 100% para evitar problemas de visualización
+          if (this.progreso.porcentajeTotal >= 90) {
             this.cuestionarioCompletado = true;
+            this.progreso.porcentajeTotal = 100;
           }
         }
         this.cargando = false;
@@ -503,10 +565,11 @@ export class CuestionariosComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.cargando = true;
+        this.error = false;
         
-        // Borrar todas las respuestas del usuario
-        this.cuestionarioService.borrarMisRespuestas().subscribe({
-          next: (response) => {
+        // Borrar todas las respuestas del usuario usando Promises para mejor manejo de errores
+        this.cuestionarioService.borrarMisRespuestasPromise()
+          .then((response) => {
             if (response && response.success) {
               console.log('Respuestas borradas correctamente:', response);
               
@@ -519,25 +582,24 @@ export class CuestionariosComponent implements OnInit {
                 porcentajeTotal: 0,
                 totalRespondidas: 0,
                 totalAResponder: 0,
-                esJefe: false
+                preguntasVisible: 0
               };
               
               // Iniciar la evaluación nuevamente
               this.iniciarCuestionario();
             } else {
-              console.error('Error al borrar respuestas:', response);
+              console.error('Error en la respuesta del servidor:', response);
               this.error = true;
-              this.errorMessage = 'Error al reiniciar la evaluación.';
+              this.errorMessage = 'Error al reiniciar la evaluación: Respuesta inválida del servidor.';
             }
             this.cargando = false;
-          },
-          error: (error) => {
+          })
+          .catch((error) => {
             console.error('Error al borrar respuestas:', error);
             this.error = true;
-            this.errorMessage = 'Error al reiniciar la evaluación.';
+            this.errorMessage = `Error al reiniciar la evaluación: ${error.message || 'Error de conexión con el servidor.'}`;
             this.cargando = false;
-          }
-        });
+          });
       }
     });
   }
@@ -550,16 +612,32 @@ export class CuestionariosComponent implements OnInit {
           throw result;
         }
         
-        if (result.progreso) {
+        if (result.data) {
           this.progreso = {
             ...this.progreso,
-            ...result.progreso
+            ...result.data
           };
         }
         
-        // Verificar si ya se completó el cuestionario
-        if (this.progreso.totalRespondidas === this.progreso.totalAResponder) {
+        // Verificar si el usuario ha respondido la última pregunta disponible
+        const ultimaPregunta = this.preguntas && this.preguntas.length > 0 
+          ? this.preguntas[this.preguntas.length - 1] 
+          : null;
+          
+        if (ultimaPregunta && this.respuestasSeleccionadas[ultimaPregunta.id]) {
+          // Si ha respondido la última pregunta, marcar como completado
           this.cuestionarioCompletado = true;
+          this.progreso.porcentajeTotal = 100;
+        } else if (this.progreso.totalRespondidas === this.progreso.totalAResponder) {
+          // Alternativa: si ha respondido todas las preguntas según el progreso
+          this.cuestionarioCompletado = true;
+          this.progreso.porcentajeTotal = 100;
+        }
+        
+        // Si el progreso es alto (>90%), considerarlo como completado
+        else if (this.progreso.porcentajeTotal >= 90) {
+          this.cuestionarioCompletado = true;
+          this.progreso.porcentajeTotal = 100;
         }
       });
   }

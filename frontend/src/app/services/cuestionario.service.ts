@@ -105,6 +105,15 @@ export class CuestionarioService {
     }
   }
 
+  async borrarMisRespuestasPromise(): Promise<any> {
+    try {
+      return await lastValueFrom(this.borrarMisRespuestas());
+    } catch (error) {
+      console.error('Error al borrar respuestas:', error);
+      throw this.handleErrorPromise(error);
+    }
+  }
+
   // Método para manejar errores en promesas
   private handleErrorPromise(error: any): any {
     if (error instanceof HttpErrorResponse) {
