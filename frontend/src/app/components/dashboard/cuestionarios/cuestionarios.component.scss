@@ -21,6 +21,14 @@ $text-muted: #95aac9;
 // Importar los módulos de Sass necesarios para usar las nuevas funciones
 @use "sass:color";
 
+// Agrego este estilo al inicio del archivo
+.empty-cuestionarios {
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 :host {
   display: block;
   width: 100%;

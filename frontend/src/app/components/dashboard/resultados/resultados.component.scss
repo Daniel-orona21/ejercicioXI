@@ -27,6 +27,13 @@ $risk-bajo: $success;
 $risk-moderado: $warning;
 $risk-alto: $danger;
 
+.empty-results {
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .resultados-container {
   padding: 1.5rem;
   width: 100%;

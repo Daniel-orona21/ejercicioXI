@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'factores_riesgo_psicosocial',
+  database: process.env.DB_NAME || 'app_usuarios',
   multipleStatements: true // Importante para ejecutar múltiples sentencias SQL
 });
 
@@ -34,7 +34,7 @@ connection.connect((err) => {
       process.exit(1);
     }
     
-    console.log('Tablas y datos creados exitosamente.');
+    console.log('Estructura de base de datos creada exitosamente.');
     
     // Cerrar la conexión
     connection.end((err) => {
