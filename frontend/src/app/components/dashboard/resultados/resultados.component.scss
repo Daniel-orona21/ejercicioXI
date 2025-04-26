@@ -183,7 +183,7 @@ $risk-alto: $danger;
           }
           
           &:hover {
-            background-color: darken($primary, 10%);
+            background-color: color.adjust($primary, $lightness: -10%);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba($primary, 0.4);
           }
@@ -858,7 +858,7 @@ $risk-alto: $danger;
     }
     
     &:hover {
-      background-color: darken($primary, 5%);
+      background-color: color.adjust($primary, $lightness: -5%);
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba($primary, 0.3);
     }
@@ -896,7 +896,7 @@ $risk-alto: $danger;
       }
       
       &:hover {
-        background-color: darken($primary, 5%);
+        background-color: color.adjust($primary, $lightness: -5%);
       }
       
       &:hover + .dropdown-menu,

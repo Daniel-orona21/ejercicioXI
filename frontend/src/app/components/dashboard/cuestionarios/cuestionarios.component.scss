@@ -36,12 +36,428 @@ $text-muted: #95aac9;
 }
 
 .cuestionarios-container {
-  padding: 1rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 120px);
+  padding: 40px 20px;
+  background-color: #f5f7fa;
+}
+
+.cuestionario-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   width: 100%;
-  height: 100%;
+  max-width: 800px;
+  padding: 40px;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+  }
+}
+
+// Estado de carga
+.estado-loading {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+  
+  p {
+    margin-top: 20px;
+    color: #666;
+    font-size: 18px;
+  }
+  
+  mat-progress-bar {
+    width: 70%;
+    margin-bottom: 20px;
+  }
+}
+
+// Estado completado
+.estado-completado {
+  text-align: center;
+  padding: 20px 0;
+  
+  .icon-container {
+    margin-bottom: 25px;
+    
+    .check-icon {
+      font-size: 80px;
+      height: 80px;
+      width: 80px;
+      color: #4caf50;
+    }
+  }
+  
+  h2 {
+    color: #3f51b5;
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  
+  p {
+    font-size: 18px;
+    color: #5f6368;
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
+  
+  .actions {
+    margin-top: 40px;
+    
+    button {
+      padding: 8px 30px;
+      font-size: 16px;
+    }
+  }
+}
+
+// Estado pendiente
+.estado-pendiente {
+  h2 {
+    color: #3f51b5;
+    font-size: 28px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 500;
+  }
+  
+  .estado-descripcion {
+    text-align: center;
+    
+    > p {
+      font-size: 18px;
+      color: #5f6368;
+      margin-bottom: 30px;
+      line-height: 1.5;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  
+  .progreso-parcial, .sin-progreso {
+    margin-top: 30px;
+    padding: 30px;
+    background-color: #f8f9ff;
+    border-radius: 10px;
+    
+    p {
+      font-size: 16px;
+      color: #5f6368;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    
+    button {
+      margin-top: 25px;
+      padding: 8px 30px;
+      font-size: 16px;
+    }
+  }
+}
+
+// Información de progreso
+.progreso-info {
+  margin: 30px 0;
+  
+  p {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .progreso-porcentaje {
+    text-align: right;
+    color: #3f51b5;
+    font-weight: 500;
+    margin-top: 5px;
+  }
+  
+  mat-progress-bar {
+    height: 8px;
+    border-radius: 4px;
+  }
+}
+
+// Estado de error
+.estado-error {
+  text-align: center;
+  padding: 30px;
+  background-color: #fff5f5;
+  border-radius: 10px;
+  margin-top: 20px;
+  
+  .error-icon {
+    font-size: 60px;
+    height: 60px;
+    width: 60px;
+    color: #f44336;
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    color: #d32f2f;
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  p {
+    font-size: 16px;
+    color: #5f6368;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    margin-top: 10px;
+  }
+}
+
+// Estilos para el formulario del cuestionario
+.cuestionario-form {
+  .form-header {
+    margin-bottom: 30px;
   position: relative;
+    
+    .back-button {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    
+    h2 {
+      text-align: center;
+      color: #3f51b5;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .pregunta-progress {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      p {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+      }
+      
+      mat-progress-bar {
+        width: 100%;
+        max-width: 300px;
+        height: 6px;
+        border-radius: 3px;
+      }
+    }
+  }
+  
+  .pregunta-container {
+    background-color: #f8f9ff;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 30px;
+    display: flex;
+    
+    .pregunta-numero {
+      width: 40px;
+      height: 40px;
+      background-color: #3f51b5;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 500;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+    
+    .pregunta-content {
+      flex: 1;
+      
+      .pregunta-texto {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 30px;
+        line-height: 1.5;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .opciones-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+    .opcion-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      border-radius: 8px;
+      border: 2px solid #e4e7ec;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      &:hover {
+        border-color: #3f51b5;
+        background-color: rgba(63, 81, 181, 0.05);
+      }
+      
+      &.selected {
+        border-color: #3f51b5;
+        background-color: rgba(63, 81, 181, 0.1);
+      }
+      
+      .opcion-radio {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid #aaa;
+        margin-right: 15px;
+        position: relative;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        .selected & {
+          border-color: #3f51b5;
+        }
+        
+        .radio-inner {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: #3f51b5;
+        }
+      }
+      
+      .opcion-texto {
+        font-size: 16px;
+        color: #333;
+      }
+    }
+  }
+  
+  .navegacion-preguntas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      
+      &:disabled {
+        opacity: 0.5;
+      }
+    }
+    
+    .navegacion-info {
+      text-align: center;
+      
+      p {
+        margin: 0;
+        font-size: 14px;
+        color: #666;
+      }
+      
+      .navegacion-secundaria {
+        font-size: 12px;
+        color: #999;
+        margin-top: 4px;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .cuestionario-card {
+    padding: 25px;
+  }
+  
+  .estado-completado {
+    .icon-container {
+      .check-icon {
+        font-size: 60px;
+        height: 60px;
+        width: 60px;
+      }
+    }
+    
+    h2 {
+      font-size: 24px;
+    }
+    
+    p {
+      font-size: 16px;
+    }
+  }
+  
+  .estado-pendiente {
+    h2 {
+      font-size: 24px;
+    }
+    
+    .estado-descripcion {
+      > p {
+        font-size: 16px;
+      }
+    }
+  }
+  
+  .cuestionario-form {
+    .form-header {
+      h2 {
+        font-size: 20px;
+        margin-top: 10px;
+      }
+    }
+    
+    .pregunta-container {
+      padding: 20px;
+      flex-direction: column;
+      
+      .pregunta-numero {
+        margin-bottom: 15px;
+        margin-right: 0;
+      }
+      
+      .pregunta-texto {
+        font-size: 16px;
+      }
+    }
+    
+    .navegacion-preguntas {
+      flex-wrap: wrap;
+      gap: 15px;
+      
+      button {
+        flex: 1;
+        min-width: 120px;
+      }
+      
+      .navegacion-info {
+        order: -1;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
   
   // Mensajes de notificación
   .mensaje-container {
@@ -725,7 +1141,6 @@ $text-muted: #95aac9;
             
             &:hover {
               background-color: color.scale($secondary-color, $lightness: -5%);
-            }
           }
         }
       }

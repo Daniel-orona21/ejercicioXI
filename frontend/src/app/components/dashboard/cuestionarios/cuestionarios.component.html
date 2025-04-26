@@ -1,5 +1,133 @@
 <div class="cuestionarios-container">
-  <div class="empty-cuestionarios">
-    <!-- Contenido eliminado por solicitud del usuario -->
+  <div class="cuestionario-card">
+    <ng-container *ngIf="cargando">
+      <div class="estado-loading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <p>Verificando estado del cuestionario...</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!cargando">
+      <!-- Mensajes de error -->
+      <div *ngIf="error" class="estado-error">
+        <mat-icon class="error-icon">error</mat-icon>
+        <h2>Error</h2>
+        <p>{{ errorMessage }}</p>
+        <button mat-button color="primary" (click)="verificarEstadoCuestionario()">
+          Intentar nuevamente
+        </button>
+      </div>
+
+      <!-- Formulario del cuestionario cuando está activo -->
+      <ng-container *ngIf="mostrandoCuestionario && !error">
+        <div class="cuestionario-form">
+          <div class="form-header">
+            <div class="back-button">
+              <button mat-icon-button (click)="volverAInicio()">
+                <mat-icon>arrow_back</mat-icon>
+              </button>
+            </div>
+            <h2>Evaluación de Factores de Riesgo Psicosocial</h2>
+            <div class="pregunta-progress">
+              <p>Pregunta {{ preguntaActual + 1 }} de {{ preguntas.length }}</p>
+              <mat-progress-bar mode="determinate" [value]="(preguntaActual + 1) / preguntas.length * 100"></mat-progress-bar>
+            </div>
+          </div>
+          
+          <div class="pregunta-container" *ngIf="preguntas && preguntas.length > 0">
+            <div class="pregunta-numero">{{ preguntaActual + 1 }}</div>
+            <div class="pregunta-content">
+              <h3 class="pregunta-texto">{{ preguntas[preguntaActual].texto }}</h3>
+              
+              <div class="opciones-container">
+                <div 
+                  *ngFor="let opcion of opcionesRespuesta" 
+                  class="opcion-item"
+                  [class.selected]="respuestasSeleccionadas[preguntas[preguntaActual].id] === opcion.id"
+                  (click)="guardarRespuesta(preguntas[preguntaActual].id, opcion.id)"
+                >
+                  <div class="opcion-radio">
+                    <div class="radio-inner" *ngIf="respuestasSeleccionadas[preguntas[preguntaActual].id] === opcion.id"></div>
+                  </div>
+                  <div class="opcion-texto">{{ opcion.texto }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="navegacion-preguntas">
+            <button mat-raised-button color="basic" (click)="preguntaAnterior()" [disabled]="preguntaActual === 0">
+              <mat-icon>arrow_back</mat-icon> Anterior
+            </button>
+            
+            <div class="navegacion-info">
+              <p>{{ preguntaActual + 1 }} de {{ preguntas.length }}</p>
+              <p class="navegacion-secundaria">{{ progreso.totalRespondidas }} preguntas respondidas</p>
+            </div>
+            
+            <button 
+              mat-raised-button 
+              color="primary" 
+              [disabled]="!respuestasSeleccionadas[preguntas[preguntaActual].id]"
+              (click)="guardarRespuesta(preguntas[preguntaActual].id, respuestasSeleccionadas[preguntas[preguntaActual].id])"
+            >
+              Siguiente <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Vista de cuestionario completado -->
+      <ng-container *ngIf="cuestionarioCompletado && !mostrandoCuestionario && !error">
+        <div class="estado-completado">
+          <div class="icon-container">
+            <mat-icon class="check-icon">check_circle</mat-icon>
+          </div>
+          <h2>¡Evaluación completada!</h2>
+          <p>Has respondido todas las preguntas de la evaluación de factores de riesgo psicosocial.</p>
+          <div class="progreso-info">
+            <p><strong>{{ progreso.totalRespondidas }}</strong> preguntas respondidas de <strong>{{ progreso.totalAResponder }}</strong></p>
+            <mat-progress-bar mode="determinate" [value]="progreso.porcentajeTotal" color="primary"></mat-progress-bar>
+            <p class="progreso-porcentaje">{{progreso.porcentajeTotal}}% completado</p>
+          </div>
+          <div class="actions">
+            <button mat-raised-button color="primary" routerLink="/dashboard/resultados">
+              Ver resultados
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Vista inicial si no ha completado y no está mostrando el cuestionario -->
+      <ng-container *ngIf="!cuestionarioCompletado && !mostrandoCuestionario && !error">
+        <div class="estado-pendiente">
+          <h2>Evaluación de Factores de Riesgo Psicosocial</h2>
+          
+          <div class="estado-descripcion">
+            <p>Esta evaluación te permitirá identificar factores de riesgo psicosocial en tu entorno laboral.</p>
+            
+            <div *ngIf="progreso.porcentajeTotal > 0" class="progreso-parcial">
+              <p>Has avanzado en la evaluación pero aún no la has completado.</p>
+              <div class="progreso-info">
+                <p><strong>{{ progreso.totalRespondidas }}</strong> preguntas respondidas de <strong>{{ progreso.totalAResponder }}</strong></p>
+                <mat-progress-bar mode="determinate" [value]="progreso.porcentajeTotal" color="accent"></mat-progress-bar>
+                <p class="progreso-porcentaje">{{progreso.porcentajeTotal}}% completado</p>
+              </div>
+              <button mat-raised-button color="primary" (click)="continuarCuestionario()">
+                Continuar evaluación
+              </button>
+            </div>
+            
+            <div *ngIf="progreso.porcentajeTotal === 0" class="sin-progreso">
+              <p>Aún no has iniciado la evaluación de factores de riesgo psicosocial.</p>
+              <p>Este cuestionario te tomará aproximadamente 15-20 minutos en completar.</p>
+              <button mat-raised-button color="primary" (click)="iniciarCuestionario()">
+                Iniciar evaluación
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
   </div>
 </div>

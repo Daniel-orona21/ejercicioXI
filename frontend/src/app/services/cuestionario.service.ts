@@ -1,95 +1,99 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, lastValueFrom, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CuestionarioService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/cuestionario`;
 
   constructor(private http: HttpClient) { }
 
-  // Obtener todos los cuestionarios
-  getAllCuestionarios(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/cuestionarios`);
+  // Obtener todas las preguntas (endpoint público)
+  getPreguntas(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/preguntas`);
   }
 
-  // Obtener un cuestionario específico con sus preguntas
-  getCuestionarioWithQuestions(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/cuestionarios/${id}`);
+  // Obtener las preguntas según el perfil del usuario (si es jefe o no)
+  getMisPreguntas(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mis-preguntas`);
   }
 
-  // Obtener todos los cuestionarios con sus preguntas
-  getAllCuestionariosWithQuestions(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/cuestionarios-with-questions`);
-  }
-
-  // Obtener estado de cuestionarios para el usuario actual
-  getEstadoCuestionarios(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/mis-cuestionarios`);
-  }
-
-  // Obtener respuestas para un cuestionario específico del usuario actual
-  getRespuestasCuestionario(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/mis-cuestionarios/${id}/respuestas`);
-  }
-
-  // Obtener todas las respuestas de todos los cuestionarios del usuario actual
-  getAllRespuestasUsuario(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/mis-respuestas`);
-  }
-
-  // Obtener todas las respuestas detalladas (usando el JOIN completo)
-  getAllRespuestasDetalladasUsuario(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/mis-respuestas-detalladas`);
-  }
-
-  // Iniciar un cuestionario
-  iniciarCuestionario(cuestionarioId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/iniciar-cuestionario`, { cuestionarioId });
+  // Obtener opciones de respuesta (endpoint público)
+  getOpcionesRespuesta(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/opciones-respuesta`);
   }
 
   // Guardar una respuesta individual
-  guardarRespuesta(cuestionarioId: number, preguntaId: number, respuestaTexto: string): Observable<any> {
+  guardarRespuesta(preguntaId: number, opcionRespuestaId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/guardar-respuesta`, {
-      cuestionarioId,
       preguntaId,
-      respuestaTexto
+      opcionRespuestaId
     });
   }
 
   // Guardar múltiples respuestas a la vez
-  guardarRespuestas(cuestionarioId: number, respuestas: any[]): Observable<any> {
+  guardarRespuestas(respuestas: { preguntaId: number, opcionRespuestaId: number }[]): Observable<any> {
     return this.http.post(`${this.apiUrl}/guardar-respuestas`, {
-      cuestionarioId,
       respuestas
     });
   }
 
-  // Completar un cuestionario
-  completarCuestionario(cuestionarioId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/completar-cuestionario`, { cuestionarioId });
+  // Obtener todas las respuestas del usuario actual
+  getMisRespuestas(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mis-respuestas`);
   }
 
-  // Reiniciar todos los cuestionarios para el usuario actual
-  reiniciarCuestionarios(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/reiniciar-cuestionarios`, {});
+  // Obtener el progreso del usuario en el cuestionario
+  getMiProgreso(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mi-progreso`);
   }
 
-  // Corregir respuestas incorrectamente asociadas
-  corregirRespuestasIncorrectas(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/corregir-respuestas`, {});
+  // Métodos para convertir Observable a Promise con mejor manejo de errores
+  async getMisPreguntasPromise(): Promise<any> {
+    try {
+      return await lastValueFrom(this.getMisPreguntas());
+    } catch (error) {
+      console.error('Error al obtener preguntas:', error);
+      throw this.handleErrorPromise(error);
+  }
   }
 
-  // Reiniciar y restaurar correctamente todas las respuestas
-  restaurarRespuestas(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/restaurar-respuestas`, {});
+  async getOpcionesRespuestaPromise(): Promise<any> {
+    try {
+      return await lastValueFrom(this.getOpcionesRespuesta());
+    } catch (error) {
+      console.error('Error al obtener opciones de respuesta:', error);
+      throw this.handleErrorPromise(error);
+    }
   }
 
-  // Obtener todas las respuestas de todos los usuarios (para estadísticas globales)
-  getAllRespuestasUsuarios(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/todas-respuestas`);
+  async getMisRespuestasPromise(): Promise<any> {
+    try {
+      return await lastValueFrom(this.getMisRespuestas());
+    } catch (error) {
+      console.error('Error al obtener respuestas:', error);
+      throw this.handleErrorPromise(error);
+    }
+  }
+
+  // Método para manejar errores en promesas
+  private handleErrorPromise(error: any): any {
+    if (error instanceof HttpErrorResponse) {
+      // Preservar el status para poder verificarlo en el componente
+      return {
+        status: error.status,
+        message: error.message,
+        error: error.error
+      };
+    }
+    return error;
+  }
+
+  // Estadísticas para administradores
+  getEstadisticas(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/estadisticas`);
   }
 } 
