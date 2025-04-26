@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ElementRef, ViewChild, PLATFORM_ID, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, ViewChild, PLATFORM_ID, Inject, OnDestroy, Pipe, PipeTransform } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Router } from '@angular/router';
@@ -30,10 +30,26 @@ interface ResultadoRiesgo {
   respuestasAnalizadas: number;
 }
 
+// Pipe para filtrar solo el cuestionario de Factores de Riesgo Psicosocial
+@Pipe({
+  name: 'filtroFactoresRiesgo',
+  standalone: true
+})
+export class FiltroFactoresRiesgoPipe implements PipeTransform {
+  transform(items: any[]): any[] {
+    if (!items) return [];
+    return items.filter(item => 
+      item.cuestionarioCodigo === 'factores' || 
+      item.codigo === 'factores' || 
+      (item.cuestionario && item.cuestionario.includes('Factores de Riesgo'))
+    );
+  }
+}
+
 @Component({
   selector: 'app-resultados',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, RouterModule],
+  imports: [CommonModule, HttpClientModule, RouterModule, FiltroFactoresRiesgoPipe],
   providers: [PdfService],
   templateUrl: './resultados.component.html',
   styleUrls: ['./resultados.component.scss']
@@ -106,8 +122,14 @@ export class ResultadosComponent implements OnInit, OnDestroy {
         this.loading = false;
         
         if (response.success && response.data) {
+          // Filtramos para mantener solo los datos de Factores de Riesgo Psicosocial
+          const cuestionariosFiltrados = response.data.filter((cuestionario: any) => 
+            cuestionario.codigo === 'factores' || 
+            (cuestionario.nombre && cuestionario.nombre.includes('Factores de Riesgo'))
+          );
+          
           // Procesar los datos para verificar la integridad
-          const cuestionariosVerificados = response.data.map((cuestionario: any) => {
+          const cuestionariosVerificados = cuestionariosFiltrados.map((cuestionario: any) => {
             // Verificar que las respuestas pertenezcan al cuestionario correcto
             const respuestasVerificadas = cuestionario.respuestas.filter((r: any) => {
               // Si la pregunta tiene un cuestionarioId definido, verificar que coincida
@@ -545,6 +567,12 @@ export class ResultadosComponent implements OnInit, OnDestroy {
   
   // Procesar datos reales recibidos de la API
   procesarDatosGlobales(datos: any[]): void {
+    // Primero filtramos para mantener solo los datos de Factores de Riesgo Psicosocial
+    const datosFiltrados = datos.filter(respuesta => 
+      respuesta.cuestionario_codigo === 'factores' || 
+      (respuesta.cuestionario_nombre && respuesta.cuestionario_nombre.includes('Factores de Riesgo'))
+    );
+    
     // Contador de usuarios únicos
     const usuariosUnicos = new Set();
     
@@ -555,7 +583,7 @@ export class ResultadosComponent implements OnInit, OnDestroy {
     const respuestasPorCuestionario: {[key: string]: {respuestas: number, completados: number}} = {};
     
     // Procesar cada respuesta para contar usuarios y respuestas
-    datos.forEach(respuesta => {
+    datosFiltrados.forEach(respuesta => {
       // Contar usuarios únicos
       if (respuesta.usuario_id) {
         usuariosUnicos.add(respuesta.usuario_id);
@@ -580,7 +608,7 @@ export class ResultadosComponent implements OnInit, OnDestroy {
     // Primero agrupar por usuario y cuestionario
     const respuestasPorUsuario: {[key: string]: {[key: string]: any[]}} = {};
     
-    datos.forEach(respuesta => {
+    datosFiltrados.forEach(respuesta => {
       if (!respuesta.usuario_id || !respuesta.cuestionario_id) return;
       
       const clave = `${respuesta.usuario_id}`;

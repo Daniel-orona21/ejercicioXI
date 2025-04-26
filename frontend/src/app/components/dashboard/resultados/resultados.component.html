@@ -107,7 +107,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of datosGlobales.respuestasPorCuestionario">
+                <tr *ngFor="let item of datosGlobales.respuestasPorCuestionario | filtroFactoresRiesgo">
                   <td>{{item.cuestionario}}</td>
                   <td>{{item.respuestas}}</td>
                   <td>{{item.completados}}</td>
@@ -185,7 +185,7 @@
     
     <!-- Tarjetas de resumen de riesgo -->
     <div class="risk-cards-row">
-      <div *ngFor="let resultado of resultadosRiesgo" class="risk-card" [ngClass]="resultado.nivelRiesgo.toLowerCase()">
+      <div *ngFor="let resultado of resultadosRiesgo | filtroFactoresRiesgo" class="risk-card" [ngClass]="resultado.nivelRiesgo.toLowerCase()">
         <div class="card-header">
           <h2>{{resultado.cuestionarioNombre}}</h2>
         </div>
@@ -222,7 +222,7 @@
       <h2>Recomendaciones según NOM-035</h2>
       
       <div class="recommendations-cards">
-        <div *ngFor="let resultado of resultadosRiesgo" class="recommendation-card" [ngClass]="resultado.nivelRiesgo.toLowerCase()">
+        <div *ngFor="let resultado of resultadosRiesgo | filtroFactoresRiesgo" class="recommendation-card" [ngClass]="resultado.nivelRiesgo.toLowerCase()">
           <div class="card-header">
             <h3>{{resultado.cuestionarioNombre}}</h3>
             <span class="risk-badge">{{resultado.nivelRiesgo}}</span>
@@ -316,7 +316,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of datosGlobales.respuestasPorCuestionario">
+                <tr *ngFor="let item of datosGlobales.respuestasPorCuestionario | filtroFactoresRiesgo">
                   <td>{{item.cuestionario}}</td>
                   <td>{{item.respuestas}}</td>
                   <td>{{item.completados}}</td>
