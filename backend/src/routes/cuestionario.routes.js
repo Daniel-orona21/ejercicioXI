@@ -6,12 +6,15 @@ const authMiddleware = require('../middleware/auth.middleware');
 // Rutas públicas (sin autenticación)
 router.get('/preguntas', cuestionarioController.getPreguntas);
 router.get('/opciones-respuesta', cuestionarioController.getOpcionesRespuesta);
+router.post('/guardar-respuesta-manual', cuestionarioController.guardarRespuestaManual);
+router.post('/guardar-respuestas-manual', cuestionarioController.guardarMultiplesRespuestasManual);
 
 // Rutas protegidas (requieren autenticación)
 router.get('/mis-preguntas', authMiddleware, cuestionarioController.getPreguntasSegunPerfil);
 router.post('/guardar-respuesta', authMiddleware, cuestionarioController.guardarRespuesta);
 router.post('/guardar-respuestas', authMiddleware, cuestionarioController.guardarMultiplesRespuestas);
 router.get('/mis-respuestas', authMiddleware, cuestionarioController.getRespuestasUsuario);
+router.delete('/mis-respuestas', authMiddleware, cuestionarioController.borrarRespuestasUsuario);
 router.get('/mi-progreso', authMiddleware, cuestionarioController.getProgresoUsuario);
 
 // Rutas para administradores (podrían requerir un middleware adicional)

@@ -29,28 +29,64 @@
             </div>
             <h2>Evaluación de Factores de Riesgo Psicosocial</h2>
             <div class="pregunta-progress">
-              <p>Pregunta {{ preguntaActual + 1 }} de {{ preguntas.length }}</p>
-              <mat-progress-bar mode="determinate" [value]="(preguntaActual + 1) / preguntas.length * 100"></mat-progress-bar>
+              <p>Pregunta {{ preguntaActual + 1 }} de {{ preguntas && preguntas.length ? preguntas.length : 0 }}</p>
+              <mat-progress-bar mode="determinate" [value]="(preguntaActual + 1) / (preguntas && preguntas.length ? preguntas.length : 1) * 100"></mat-progress-bar>
             </div>
           </div>
           
           <div class="pregunta-container" *ngIf="preguntas && preguntas.length > 0">
             <div class="pregunta-numero">{{ preguntaActual + 1 }}</div>
             <div class="pregunta-content">
-              <h3 class="pregunta-texto">{{ preguntas[preguntaActual].texto }}</h3>
+              <h3 class="pregunta-texto">
+                {{ preguntas[preguntaActual].texto }}
+                <!-- Destacar la pregunta si es "Soy jefe" -->
+                <span *ngIf="preguntas[preguntaActual].orden === 68" class="pregunta-importante">
+                  (Esta respuesta determinará si debes contestar preguntas adicionales)
+                </span>
+              </h3>
               
               <div class="opciones-container">
-                <div 
-                  *ngFor="let opcion of opcionesRespuesta" 
-                  class="opcion-item"
-                  [class.selected]="respuestasSeleccionadas[preguntas[preguntaActual].id] === opcion.id"
-                  (click)="guardarRespuesta(preguntas[preguntaActual].id, opcion.id)"
-                >
-                  <div class="opcion-radio">
-                    <div class="radio-inner" *ngIf="respuestasSeleccionadas[preguntas[preguntaActual].id] === opcion.id"></div>
+                <!-- Opciones normales (5 opciones) para preguntas regulares -->
+                <ng-container *ngIf="preguntas[preguntaActual] && preguntas[preguntaActual].orden !== 68">
+                  <div 
+                    *ngFor="let opcion of opcionesRespuesta" 
+                    class="opcion-item"
+                    [class.selected]="respuestasSeleccionadas[preguntas[preguntaActual].id] === opcion.id"
+                    (click)="guardarRespuesta(preguntas[preguntaActual].id, opcion.id)"
+                  >
+                    <div class="opcion-radio">
+                      <div class="radio-inner" *ngIf="respuestasSeleccionadas[preguntas[preguntaActual].id] === opcion.id"></div>
+                    </div>
+                    <div class="opcion-texto">{{ opcion.texto }}</div>
                   </div>
-                  <div class="opcion-texto">{{ opcion.texto }}</div>
-                </div>
+                </ng-container>
+                
+                <!-- Solo 2 opciones (Sí/No) para la pregunta "Soy jefe" -->
+                <ng-container *ngIf="preguntas[preguntaActual] && preguntas[preguntaActual].orden === 68">
+                  <!-- Opción SÍ (usando ID de "Siempre" o "Casi siempre" -> valores 3 y 4) -->
+                  <div 
+                    class="opcion-item opcion-si"
+                    [class.selected]="respuestasSeleccionadas[preguntas[preguntaActual].id] === 1"
+                    (click)="guardarRespuesta(preguntas[preguntaActual].id, 1)"
+                  >
+                    <div class="opcion-radio">
+                      <div class="radio-inner" *ngIf="respuestasSeleccionadas[preguntas[preguntaActual].id] === 1"></div>
+                    </div>
+                    <div class="opcion-texto">Sí</div>
+                  </div>
+                  
+                  <!-- Opción NO (usando ID de "Algunas veces", "Casi nunca" o "Nunca" -> valores 0, 1 y 2) -->
+                  <div 
+                    class="opcion-item opcion-no"
+                    [class.selected]="respuestasSeleccionadas[preguntas[preguntaActual].id] === 5"
+                    (click)="guardarRespuesta(preguntas[preguntaActual].id, 5)"
+                  >
+                    <div class="opcion-radio">
+                      <div class="radio-inner" *ngIf="respuestasSeleccionadas[preguntas[preguntaActual].id] === 5"></div>
+                    </div>
+                    <div class="opcion-texto">No</div>
+                  </div>
+                </ng-container>
               </div>
             </div>
           </div>
@@ -61,18 +97,34 @@
             </button>
             
             <div class="navegacion-info">
-              <p>{{ preguntaActual + 1 }} de {{ preguntas.length }}</p>
+              <p>{{ preguntaActual + 1 }} de {{ preguntas && preguntas.length ? preguntas.length : 0 }}</p>
               <p class="navegacion-secundaria">{{ progreso.totalRespondidas }} preguntas respondidas</p>
             </div>
             
-            <button 
-              mat-raised-button 
-              color="primary" 
-              [disabled]="!respuestasSeleccionadas[preguntas[preguntaActual].id]"
-              (click)="guardarRespuesta(preguntas[preguntaActual].id, respuestasSeleccionadas[preguntas[preguntaActual].id])"
-            >
-              Siguiente <mat-icon>arrow_forward</mat-icon>
-            </button>
+            <!-- Solo mostrar el botón "Siguiente" si NO es la pregunta "Soy jefe", ya que esa se maneja de forma especial -->
+            <ng-container *ngIf="preguntas[preguntaActual] && preguntas[preguntaActual].orden !== 68">
+              <button 
+                mat-raised-button 
+                color="primary" 
+                [disabled]="!respuestasSeleccionadas[preguntas[preguntaActual].id]"
+                (click)="guardarRespuesta(preguntas[preguntaActual].id, respuestasSeleccionadas[preguntas[preguntaActual].id])"
+              >
+                Siguiente <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </ng-container>
+            
+            <!-- Para la pregunta "Soy jefe", mostrar botón especial -->
+            <ng-container *ngIf="preguntas[preguntaActual] && preguntas[preguntaActual].orden === 68">
+              <button 
+                mat-raised-button 
+                color="primary" 
+                [disabled]="!respuestasSeleccionadas[preguntas[preguntaActual].id]"
+                (click)="guardarRespuesta(preguntas[preguntaActual].id, respuestasSeleccionadas[preguntas[preguntaActual].id])"
+              >
+                <span *ngIf="guardando">Procesando...</span>
+                <span *ngIf="!guardando">Continuar</span>
+              </button>
+            </ng-container>
           </div>
         </div>
       </ng-container>
@@ -93,6 +145,9 @@
           <div class="actions">
             <button mat-raised-button color="primary" routerLink="/dashboard/resultados">
               Ver resultados
+            </button>
+            <button mat-raised-button color="warn" (click)="reiniciarEvaluacion()" class="btn-reiniciar">
+              Volver a contestar
             </button>
           </div>
         </div>
@@ -131,3 +186,51 @@
     </ng-container>
   </div>
 </div>
+
+<style>
+  .pregunta-importante {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #f44336;
+    font-weight: normal;
+  }
+  
+  .opcion-si,
+  .opcion-no {
+    width: 200px;
+    margin: 10px auto;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .opcion-si.selected {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+  }
+  
+  .opcion-no.selected {
+    background-color: #ffebee;
+    border-color: #f44336;
+  }
+  
+  .opcion-si .opcion-texto,
+  .opcion-no .opcion-texto {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .btn-reiniciar {
+    margin-left: 10px;
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+</style>

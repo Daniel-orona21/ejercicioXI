@@ -141,6 +141,77 @@ const CuestionarioController = {
     }
   },
 
+  // Guardar una respuesta individual con ID de usuario manual (para pruebas)
+  guardarRespuestaManual: async (req, res) => {
+    try {
+      const { preguntaId, opcionRespuestaId, usuarioId } = req.body;
+      
+      // Validar que se proporcionó un ID de usuario
+      if (!usuarioId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Debe proporcionar un ID de usuario'
+        });
+      }
+      
+      // Validar que la pregunta y opción de respuesta existan
+      const pregunta = await Pregunta.getById(preguntaId);
+      if (!pregunta) {
+        return res.status(404).json({
+          success: false,
+          message: 'La pregunta especificada no existe'
+        });
+      }
+      
+      const opcionRespuesta = await OpcionRespuesta.getById(opcionRespuestaId);
+      if (!opcionRespuesta) {
+        return res.status(404).json({
+          success: false,
+          message: 'La opción de respuesta especificada no existe'
+        });
+      }
+      
+      // Verificar si la pregunta que se está respondiendo es la de "Soy jefe"
+      const esJefePregunta = await Pregunta.esJefePregunta(preguntaId);
+      
+      // Guardar la respuesta
+      await RespuestaUsuario.guardarRespuesta(usuarioId, preguntaId, opcionRespuestaId);
+      
+      let metadata = {};
+      
+      // Si la pregunta es la de "Soy jefe", verificar si debe mostrar preguntas adicionales
+      if (esJefePregunta) {
+        const esJefe = opcionRespuesta.valor >= 3; // Valores 3 y 4 corresponden a "Casi siempre" y "Siempre"
+        const preguntasOpcionales = esJefe ? await Pregunta.getOpcionales() : [];
+        
+        metadata = {
+          esJefe,
+          mostrarPreguntasAdicionales: esJefe,
+          preguntasAdicionales: preguntasOpcionales
+        };
+      }
+      
+      // Obtener el progreso actual
+      const progreso = await RespuestaUsuario.getProgreso(usuarioId);
+      
+      res.json({
+        success: true,
+        message: 'Respuesta guardada correctamente',
+        metadata: {
+          ...metadata,
+          progreso
+        }
+      });
+    } catch (error) {
+      console.error('Error al guardar respuesta manual:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error al guardar la respuesta',
+        error: error.message
+      });
+    }
+  },
+
   // Guardar múltiples respuestas en una sola petición
   guardarMultiplesRespuestas: async (req, res) => {
     try {
@@ -184,6 +255,52 @@ const CuestionarioController = {
       });
     }
   },
+  
+  // Guardar múltiples respuestas en una sola petición con ID de usuario manual (para pruebas)
+  guardarMultiplesRespuestasManual: async (req, res) => {
+    try {
+      const { respuestas } = req.body;
+      
+      if (!respuestas || !Array.isArray(respuestas) || respuestas.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Debe proporcionar un array de respuestas'
+        });
+      }
+      
+      // Verificar que cada respuesta tenga un ID de usuario
+      const todasTienenUsuario = respuestas.every(r => r.usuarioId);
+      if (!todasTienenUsuario) {
+        return res.status(400).json({
+          success: false,
+          message: 'Todas las respuestas deben tener un ID de usuario'
+        });
+      }
+      
+      // Guardar las respuestas
+      await RespuestaUsuario.guardarMultiplesRespuestas(respuestas);
+      
+      // Obtener el progreso del primer usuario (asumimos que todas son del mismo usuario)
+      const usuarioId = respuestas[0].usuarioId;
+      const progreso = await RespuestaUsuario.getProgreso(usuarioId);
+      
+      res.json({
+        success: true,
+        message: 'Respuestas guardadas correctamente',
+        data: {
+          totalGuardadas: respuestas.length,
+          progreso
+        }
+      });
+    } catch (error) {
+      console.error('Error al guardar múltiples respuestas manual:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error al guardar las respuestas',
+        error: error.message
+      });
+    }
+  },
 
   // Obtener las respuestas de un usuario
   getRespuestasUsuario: async (req, res) => {
@@ -205,6 +322,31 @@ const CuestionarioController = {
       res.status(500).json({
         success: false,
         message: 'Error al obtener las respuestas del usuario',
+        error: error.message
+      });
+    }
+  },
+
+  // Borrar todas las respuestas de un usuario
+  borrarRespuestasUsuario: async (req, res) => {
+    try {
+      const usuarioId = req.userId; // Obtenido del middleware de autenticación
+      
+      // Borrar todas las respuestas del usuario
+      const resultado = await RespuestaUsuario.borrarPorUsuarioId(usuarioId);
+      
+      res.json({
+        success: true,
+        message: 'Respuestas borradas correctamente',
+        data: {
+          totalBorradas: resultado.affectedRows || 0
+        }
+      });
+    } catch (error) {
+      console.error('Error al borrar respuestas del usuario:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error al borrar las respuestas del usuario',
         error: error.message
       });
     }

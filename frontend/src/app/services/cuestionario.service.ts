@@ -34,9 +34,21 @@ export class CuestionarioService {
     });
   }
 
+  // Guardar una respuesta con ID de usuario manual (para pruebas)
+  guardarRespuestaManual(data: { preguntaId: number, opcionRespuestaId: number, usuarioId: number }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/guardar-respuesta-manual`, data);
+  }
+
   // Guardar múltiples respuestas a la vez
   guardarRespuestas(respuestas: { preguntaId: number, opcionRespuestaId: number }[]): Observable<any> {
     return this.http.post(`${this.apiUrl}/guardar-respuestas`, {
+      respuestas
+    });
+  }
+
+  // Guardar múltiples respuestas a la vez con ID de usuario manual (para pruebas)
+  guardarRespuestasManual(respuestas: { preguntaId: number, opcionRespuestaId: number, usuarioId: number }[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/guardar-respuestas-manual`, {
       respuestas
     });
   }
@@ -51,6 +63,11 @@ export class CuestionarioService {
     return this.http.get(`${this.apiUrl}/mi-progreso`);
   }
 
+  // Borrar todas las respuestas del usuario actual
+  borrarMisRespuestas(): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/mis-respuestas`);
+  }
+
   // Métodos para convertir Observable a Promise con mejor manejo de errores
   async getMisPreguntasPromise(): Promise<any> {
     try {
@@ -58,7 +75,7 @@ export class CuestionarioService {
     } catch (error) {
       console.error('Error al obtener preguntas:', error);
       throw this.handleErrorPromise(error);
-  }
+    }
   }
 
   async getOpcionesRespuestaPromise(): Promise<any> {
@@ -75,6 +92,15 @@ export class CuestionarioService {
       return await lastValueFrom(this.getMisRespuestas());
     } catch (error) {
       console.error('Error al obtener respuestas:', error);
+      throw this.handleErrorPromise(error);
+    }
+  }
+
+  async getMiProgresoPromise(): Promise<any> {
+    try {
+      return await lastValueFrom(this.getMiProgreso());
+    } catch (error) {
+      console.error('Error al obtener progreso:', error);
       throw this.handleErrorPromise(error);
     }
   }

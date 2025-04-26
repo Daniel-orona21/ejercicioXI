@@ -10,6 +10,10 @@ const verifyToken = (req, res, next) => {
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET || 'tu_secreto_jwt');
     req.user = verified;
+    
+    // Extraer el ID del usuario decodificado y guardarlo en req.userId
+    req.userId = verified.id;
+    
     next();
   } catch (error) {
     res.status(401).json({ message: 'Token inválido' });
