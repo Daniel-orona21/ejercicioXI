@@ -1,6 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +55,13 @@ export class PdfService {
             this.resultadosComponent[metodo]();
           } else {
             console.error(`No se encontró el método ${metodo} en el componente de resultados`);
-            alert('No se pudo generar el PDF. Por favor, inténtelo de nuevo desde la página de resultados.');
+            Swal.fire({
+              title: 'Error',
+              text: 'No se pudo generar el PDF. Por favor, inténtelo de nuevo desde la página de resultados.',
+              icon: 'error',
+              confirmButtonColor: '#3f51b5',
+              confirmButtonText: 'Aceptar'
+            });
           }
         }, 1000); // Tiempo suficiente para que el componente se cargue
       });

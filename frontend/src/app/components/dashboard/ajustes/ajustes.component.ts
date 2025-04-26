@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-ajustes',
@@ -39,6 +40,12 @@ export class AjustesComponent implements OnInit {
   
   guardarAjustes(): void {
     // Aquí iría la lógica para guardar las configuraciones
-    alert('Configuración guardada con éxito');
+    Swal.fire({
+      title: 'Éxito',
+      text: 'Configuración guardada con éxito',
+      icon: 'success',
+      confirmButtonColor: '#3f51b5',
+      confirmButtonText: 'Aceptar'
+    });
   }
 }

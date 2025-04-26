@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-dashboard',
@@ -113,7 +114,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const elementosPersonales = document.querySelectorAll('.risk-cards-row, .analysis-section, .recommendations-section');
     
     if (elementosPersonales.length === 0) {
-      alert('Para descargar tu reporte personal, primero debes completar al menos un cuestionario.');
+      Swal.fire({
+        title: 'Información',
+        text: 'Para descargar tu reporte personal, primero debes completar al menos un cuestionario.',
+        icon: 'info',
+        confirmButtonColor: '#3f51b5',
+        confirmButtonText: 'Entendido'
+      });
       this.router.navigate(['/dashboard/cuestionarios']);
       return;
     }
@@ -133,7 +140,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       );
     } catch (error) {
       console.error('Error al generar el PDF personal:', error);
-      alert('Ha ocurrido un error al generar el PDF. Por favor, inténtelo de nuevo.');
+      Swal.fire({
+        title: 'Error',
+        text: 'Ha ocurrido un error al generar el PDF. Por favor, inténtelo de nuevo.',
+        icon: 'error',
+        confirmButtonColor: '#3f51b5',
+        confirmButtonText: 'Aceptar'
+      });
     } finally {
       // Ocultar indicador de carga independientemente del resultado
       this.isGeneratingPdf = false;
@@ -144,7 +157,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Seleccionar el contenedor principal
     const dashboardContainer = document.querySelector('.results-dashboard');
     if (!dashboardContainer) {
-      alert('No se encontró el contenedor de resultados. Por favor, intente de nuevo.');
+      Swal.fire({
+        title: 'Error',
+        text: 'No se encontró el contenedor de resultados. Por favor, intente de nuevo.',
+        icon: 'error',
+        confirmButtonColor: '#3f51b5',
+        confirmButtonText: 'Aceptar'
+      });
       return;
     }
     
@@ -162,7 +181,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     
     if (elementos.length === 0) {
-      alert('No se encontraron elementos para generar el reporte. Por favor, intente de nuevo.');
+      Swal.fire({
+        title: 'Error',
+        text: 'No se encontraron elementos para generar el reporte. Por favor, intente de nuevo.',
+        icon: 'error',
+        confirmButtonColor: '#3f51b5',
+        confirmButtonText: 'Aceptar'
+      });
       return;
     }
     
@@ -181,7 +206,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       );
     } catch (error) {
       console.error('Error al generar el PDF general:', error);
-      alert('Ha ocurrido un error al generar el PDF. Por favor, inténtelo de nuevo.');
+      Swal.fire({
+        title: 'Error',
+        text: 'Ha ocurrido un error al generar el PDF. Por favor, inténtelo de nuevo.',
+        icon: 'error',
+        confirmButtonColor: '#3f51b5',
+        confirmButtonText: 'Aceptar'
+      });
     } finally {
       // Ocultar indicador de carga independientemente del resultado
       this.isGeneratingPdf = false;

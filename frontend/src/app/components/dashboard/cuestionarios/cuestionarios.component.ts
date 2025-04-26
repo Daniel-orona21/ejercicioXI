@@ -10,6 +10,7 @@ import { InfoModalComponent } from './info-modal/info-modal.component';
 import { FormsModule } from '@angular/forms';
 import { CuestionarioService } from '../../../services/cuestionario.service';
 import { AuthService } from '../../../services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cuestionarios',
@@ -490,44 +491,55 @@ export class CuestionariosComponent implements OnInit {
   
   // Método para reiniciar la evaluación
   reiniciarEvaluacion(): void {
-    if (confirm('¿Estás seguro de que deseas borrar todas tus respuestas y empezar de nuevo?')) {
-      this.cargando = true;
-      
-      // Borrar todas las respuestas del usuario
-      this.cuestionarioService.borrarMisRespuestas().subscribe({
-        next: (response) => {
-          if (response && response.success) {
-            console.log('Respuestas borradas correctamente:', response);
-            
-            // Restablecer el estado del componente
-            this.cuestionarioCompletado = false;
-            this.respuestasSeleccionadas = {};
-            this.respuestasPendientesDeGuardar = [];
-            this.preguntaActual = 0;
-            this.progreso = {
-              porcentajeTotal: 0,
-              totalRespondidas: 0,
-              totalAResponder: 0,
-              esJefe: false
-            };
-            
-            // Iniciar la evaluación nuevamente
-            this.iniciarCuestionario();
-          } else {
-            console.error('Error al borrar respuestas:', response);
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas borrar todas tus respuestas y empezar de nuevo?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3f51b5',
+      cancelButtonColor: '#f44336',
+      confirmButtonText: 'Sí, reiniciar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.cargando = true;
+        
+        // Borrar todas las respuestas del usuario
+        this.cuestionarioService.borrarMisRespuestas().subscribe({
+          next: (response) => {
+            if (response && response.success) {
+              console.log('Respuestas borradas correctamente:', response);
+              
+              // Restablecer el estado del componente
+              this.cuestionarioCompletado = false;
+              this.respuestasSeleccionadas = {};
+              this.respuestasPendientesDeGuardar = [];
+              this.preguntaActual = 0;
+              this.progreso = {
+                porcentajeTotal: 0,
+                totalRespondidas: 0,
+                totalAResponder: 0,
+                esJefe: false
+              };
+              
+              // Iniciar la evaluación nuevamente
+              this.iniciarCuestionario();
+            } else {
+              console.error('Error al borrar respuestas:', response);
+              this.error = true;
+              this.errorMessage = 'Error al reiniciar la evaluación.';
+            }
+            this.cargando = false;
+          },
+          error: (error) => {
+            console.error('Error al borrar respuestas:', error);
             this.error = true;
             this.errorMessage = 'Error al reiniciar la evaluación.';
+            this.cargando = false;
           }
-          this.cargando = false;
-        },
-        error: (error) => {
-          console.error('Error al borrar respuestas:', error);
-          this.error = true;
-          this.errorMessage = 'Error al reiniciar la evaluación.';
-          this.cargando = false;
-        }
-      });
-    }
+        });
+      }
+    });
   }
 
   // Método para verificar y actualizar el progreso del usuario
@@ -550,5 +562,50 @@ export class CuestionariosComponent implements OnInit {
           this.cuestionarioCompletado = true;
         }
       });
+  }
+
+  // Método para obtener el color del gradiente de la barra de progreso según el porcentaje
+  getColorGradient(percentage: number): string {
+    // Definir colores para el espectro (rojo -> amarillo -> verde)
+    if (percentage <= 0) return '#ff0000'; // Rojo para 0%
+    if (percentage >= 100) return '#00ff00'; // Verde para 100%
+    
+    // Colores por segmentos 
+    if (percentage < 20) {
+      // Del rojo al naranja
+      const factor = percentage / 20;
+      const r = 255;
+      const g = Math.round(165 * factor);
+      const b = 0;
+      return `rgb(${r}, ${g}, ${b})`;
+    } else if (percentage < 40) {
+      // Del naranja al amarillo
+      const factor = (percentage - 20) / 20;
+      const r = 255;
+      const g = 165 + Math.round(90 * factor);
+      const b = 0;
+      return `rgb(${r}, ${g}, ${b})`;
+    } else if (percentage < 60) {
+      // Del amarillo al chartreuse
+      const factor = (percentage - 40) / 20;
+      const r = 255 - Math.round(128 * factor);
+      const g = 255;
+      const b = 0;
+      return `rgb(${r}, ${g}, ${b})`;
+    } else if (percentage < 80) {
+      // Del chartreuse al verde claro
+      const factor = (percentage - 60) / 20;
+      const r = 127 - Math.round(127 * factor);
+      const g = 255;
+      const b = 0;
+      return `rgb(${r}, ${g}, ${b})`;
+    } else {
+      // Del verde claro al verde intenso
+      const factor = (percentage - 80) / 20;
+      const r = 0;
+      const g = 255 - Math.round(55 * factor);
+      const b = Math.round(55 * factor);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
   }
 }
