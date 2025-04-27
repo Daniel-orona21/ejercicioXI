@@ -27,6 +27,15 @@ $risk-bajo: $success;
 $risk-moderado: $warning;
 $risk-alto: $danger;
 
+$primary-color: #4a6ff3;
+$secondary-color: #68d4a5;
+$accent-color: #f5a623;
+$text-color: #333;
+$light-gray: #f5f7fa;
+$gray: #e1e4e8;
+$dark-gray: #8c8c8c;
+$box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
 .empty-results {
   min-height: 400px;
   display: flex;
@@ -41,63 +50,163 @@ $risk-alto: $danger;
   margin: 0 auto;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   
-  // Loading message
-  .loading-message {
+  h2 {
+    margin-bottom: 1.5rem;
+    color: $text-color;
+    font-size: 1.5rem;
+  }
+  
+  .loading-indicator {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 3rem;
+    padding: 2rem;
     
-    i {
-      font-size: 2rem;
-      color: $primary;
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba($primary-color, 0.3);
+      border-radius: 50%;
+      border-top-color: $primary-color;
+      animation: spin 1s ease-in-out infinite;
       margin-bottom: 1rem;
     }
     
-    span {
-      font-size: 1rem;
-      color: $gray-600;
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   }
   
-  // Error message
   .error-message {
-    background-color: rgba($danger, 0.1);
-    border-left: 4px solid $danger;
-    padding: 1rem;
+    background-color: #fff2f2;
+    border: 1px solid #ffcfcf;
     border-radius: $border-radius;
-    display: flex;
-    align-items: center;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
     
-    i {
-      color: $danger;
-      font-size: 1.5rem;
-      margin-right: 1rem;
+    p {
+      color: #d8000c;
+      margin-bottom: 0.5rem;
     }
     
-    span {
-      color: $gray-800;
+    button {
+      padding: 0.25rem 0.75rem;
+      background-color: #f8f9fa;
+      border: 1px solid #d8000c;
+      border-radius: 4px;
+      color: #d8000c;
+      cursor: pointer;
+      
+      &:hover {
+        background-color: #ffeaea;
+      }
     }
   }
   
-  // Empty message
-  .empty-message {
-    background-color: rgba($primary, 0.1);
-    border-left: 4px solid $primary;
-    padding: 1rem;
+  .empty-results {
+    background-color: $light-gray;
     border-radius: $border-radius;
-    display: flex;
-    align-items: center;
+    padding: 2rem;
+    text-align: center;
     
-    i {
-      color: $primary;
-      font-size: 1.5rem;
-      margin-right: 1rem;
+    p {
+      color: $dark-gray;
+      font-size: 1.1rem;
     }
+  }
+  
+  .usuarios-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 1.5rem;
     
-    span {
-      color: $gray-800;
+    .user-card {
+      background-color: white;
+      border-radius: $border-radius;
+      box-shadow: $box-shadow;
+      overflow: hidden;
+      
+      .user-header {
+        padding: 1.25rem;
+        background-color: $light-gray;
+        border-bottom: 1px solid $gray;
+        
+        h3 {
+          margin: 0 0 0.5rem;
+          font-size: 1.2rem;
+          color: $text-color;
+        }
+        
+        .user-meta {
+          font-size: 0.9rem;
+          color: $dark-gray;
+        }
+      }
+      
+      .user-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        padding: 1.25rem;
+        background-color: white;
+        border-bottom: 1px solid $gray;
+        
+        .stat-item {
+          .stat-label {
+            font-size: 0.85rem;
+            color: $dark-gray;
+            margin-bottom: 0.25rem;
+          }
+          
+          .stat-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: $text-color;
+          }
+        }
+      }
+      
+      .respuestas-summary {
+        padding: 1.25rem;
+        
+        h4 {
+          margin: 0 0 1rem;
+          font-size: 1.1rem;
+          color: $text-color;
+        }
+        
+        .respuestas-table {
+          max-height: 300px;
+          overflow-y: auto;
+          
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            
+            th, td {
+              padding: 0.75rem;
+              text-align: left;
+              border-bottom: 1px solid $gray;
+            }
+            
+            th {
+              background-color: $light-gray;
+              font-weight: 500;
+              position: sticky;
+              top: 0;
+            }
+            
+            tr:last-child td {
+              border-bottom: none;
+            }
+            
+            tr:hover td {
+              background-color: rgba($light-gray, 0.5);
+            }
+          }
+        }
+      }
     }
   }
   
@@ -1007,6 +1116,316 @@ $risk-alto: $danger;
       .compliance-steps {
         grid-template-columns: 1fr;
       }
+    }
+    
+    .usuarios-list {
+      grid-template-columns: 1fr;
+      
+      .user-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
+
+.valoracion-info {
+  background-color: white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: $text-color;
+    font-size: 1.2rem;
+  }
+  
+  .tablas-valoracion {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    
+    .tabla-valoracion {
+      flex: 1;
+      min-width: 300px;
+      
+      h4 {
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+        color: $text-color;
+      }
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+        
+        th, td {
+          padding: 0.5rem 0.75rem;
+          text-align: left;
+          border-bottom: 1px solid $gray;
+        }
+        
+        th {
+          background-color: $light-gray;
+          font-weight: 500;
+        }
+      }
+      
+      .items-list {
+        font-size: 0.9rem;
+        color: $dark-gray;
+        line-height: 1.5;
+        margin-top: 0.5rem;
+      }
+      
+      &.tabla-inversa {
+        table {
+          th {
+            background-color: rgba($primary-color, 0.1);
+          }
+        }
+      }
+      
+      &.tabla-normal {
+        table {
+          th {
+            background-color: rgba($secondary-color, 0.1);
+          }
+        }
+      }
+    }
+  }
+}
+
+.categorias-info {
+  background-color: white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: $text-color;
+    font-size: 1.2rem;
+  }
+  
+  .categorias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    
+    .categoria-card {
+      background-color: $light-gray;
+      border-radius: $border-radius;
+      padding: 1rem;
+      
+      h4 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        color: $text-color;
+      }
+      
+      .categoria-items {
+        font-size: 0.9rem;
+        color: $dark-gray;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
+.categoria-summary {
+  padding: 1.25rem;
+  border-bottom: 1px solid $gray;
+  
+  h4 {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    color: $text-color;
+  }
+  
+  .categoria-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    
+    .categoria-stat-item {
+      background-color: $light-gray;
+      border-radius: $border-radius;
+      padding: 1rem;
+      
+      .categoria-name {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: $text-color;
+      }
+      
+      .categoria-value {
+        display: flex;
+        flex-direction: column;
+        
+        .sum-value {
+          font-size: 1.1rem;
+          font-weight: 500;
+          color: $primary-color;
+        }
+        
+        .avg-value {
+          font-size: 0.9rem;
+          color: $dark-gray;
+        }
+      }
+    }
+  }
+}
+
+.respuestas-categorias {
+  padding: 1.25rem;
+  
+  h4 {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    color: $text-color;
+  }
+  
+  .accordion-container {
+    border-radius: $border-radius;
+    overflow: hidden;
+    
+    .accordion-item {
+      margin-bottom: 0.5rem;
+      border: 1px solid $gray;
+      border-radius: $border-radius;
+      overflow: hidden;
+      
+      .accordion-header {
+        background-color: $light-gray;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        
+        .categoria-title {
+          font-weight: 500;
+          color: $text-color;
+        }
+        
+        .toggle-icon {
+          font-size: 0.8rem;
+          color: $dark-gray;
+        }
+        
+        &:hover {
+          background-color: darken($light-gray, 3%);
+        }
+      }
+      
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        
+        .respuestas-table {
+          padding: 0 1rem 1rem;
+          
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            
+            th, td {
+              padding: 0.75rem;
+              text-align: left;
+              border-bottom: 1px solid $gray;
+            }
+            
+            th {
+              background-color: $light-gray;
+              font-weight: 500;
+              position: sticky;
+              top: 0;
+            }
+            
+            tr:last-child td {
+              border-bottom: none;
+            }
+            
+            tr:hover td {
+              background-color: rgba($light-gray, 0.5);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Estilos para la sección de riesgo total */
+.riesgo-total {
+  margin: 15px 0;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  h4 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #333;
+  }
+  
+  .riesgo-content {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  
+  .riesgo-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    align-self: flex-start;
+  }
+  
+  .riesgo-info {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    
+    .riesgo-value {
+      font-weight: 500;
+    }
+  }
+  
+  .criterios-accion {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dee2e6;
+    
+    h5 {
+      font-size: 1rem;
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #495057;
+    }
+    
+    p {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: #495057;
+      margin: 0;
+      text-align: justify;
     }
   }
 }
