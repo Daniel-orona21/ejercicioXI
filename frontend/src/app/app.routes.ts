@@ -5,6 +5,7 @@ import { ResultadosComponent } from './components/dashboard/resultados/resultado
 import { CuestionariosComponent } from './components/dashboard/cuestionarios/cuestionarios.component';
 import { AjustesComponent } from './components/dashboard/ajustes/ajustes.component';
 import { ContestarComponent } from './components/dashboard/cuestionarios/contestar/contestar.component';
+import { DetalleUsuarioComponent } from './components/dashboard/detalle-usuario/detalle-usuario.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -17,6 +18,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'resultados', pathMatch: 'full' },
       { path: 'resultados', component: ResultadosComponent },
+      { path: 'detalle-usuario/:id', component: DetalleUsuarioComponent },
       { path: 'cuestionarios', component: CuestionariosComponent },
       { path: 'cuestionarios/contestar', component: ContestarComponent },
       { path: 'ajustes', component: AjustesComponent }

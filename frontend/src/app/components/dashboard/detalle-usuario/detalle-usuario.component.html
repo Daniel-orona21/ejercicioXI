@@ -1,0 +1,145 @@
+<div class="detalle-usuario-container">
+  <!-- Estado de carga -->
+  <div class="loading-indicator" *ngIf="cargando">
+    <div class="spinner"></div>
+    <p>Cargando datos del usuario...</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div class="error-message" *ngIf="error">
+    <p>{{ error }}</p>
+    <button [routerLink]="['/dashboard/resultados']">Volver a la lista</button>
+  </div>
+
+  <!-- Contenido principal - Detalle de usuario -->
+  <div class="usuario-detalle" *ngIf="!cargando && !error && detalleUsuario">
+    <!-- Encabezado con información básica del usuario -->
+    <div class="usuario-header">
+      <div class="volver-btn">
+        <button [routerLink]="['/dashboard/resultados']">← Volver a la lista</button>
+      </div>
+      <h2>Detalle de usuario</h2>
+      <div class="usuario-info">
+        <div class="info-item">
+          <div class="info-label">Nombre:</div>
+          <div class="info-value">{{ detalleUsuario.usuario.nombre }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Email:</div>
+          <div class="info-value">{{ detalleUsuario.usuario.email }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Total respuestas:</div>
+          <div class="info-value">{{ detalleUsuario.usuario.total_respuestas }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Preguntas obligatorias:</div>
+          <div class="info-value">{{ detalleUsuario.progreso.respondidasObligatorias }} / {{ detalleUsuario.progreso.totalObligatorias }}</div>
+        </div>
+        <div class="info-item" *ngIf="detalleUsuario.progreso.esJefe">
+          <div class="info-label">Preguntas opcionales:</div>
+          <div class="info-value">{{ detalleUsuario.progreso.respondidasOpcionales }} / {{ detalleUsuario.progreso.totalOpcionales }}</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nivel de riesgo total del cuestionario -->
+    <div class="riesgo-total" *ngIf="detalleUsuario.usuario.nivel_riesgo_total">
+      <h3>Nivel de riesgo total</h3>
+      <div class="riesgo-content">
+        <div class="riesgo-badge" 
+             [style.background-color]="detalleUsuario.usuario.color_riesgo_total || '#d9d9d9'"
+             [style.color]="getColorTexto(detalleUsuario.usuario.color_riesgo_total || '#d9d9d9')">
+          {{ detalleUsuario.usuario.nivel_riesgo_total }}
+        </div>
+        <div class="riesgo-info">
+          <span class="riesgo-value">Valor total: {{ detalleUsuario.usuario.suma_valores_ajustados }}</span>
+        </div>
+      </div>
+      
+      <!-- Criterios para la toma de acciones -->
+      <div class="criterios-accion">
+        <h4>Criterios para la toma de acciones:</h4>
+        <p>{{ getCriteriosAccion(detalleUsuario.usuario.nivel_riesgo_total) }}</p>
+      </div>
+    </div>
+
+    <!-- Resumen por categoría con nivel de riesgo -->
+    <div class="categoria-summary" *ngIf="detalleUsuario.usuario.sumasPorCategoria && detalleUsuario.usuario.sumasPorCategoria.length > 0">
+      <h3>Resumen por categoría</h3>
+      <div class="categoria-stats">
+        <div class="categoria-stat-item" *ngFor="let sumaCat of detalleUsuario.usuario.sumasPorCategoria"
+             [style.border-color]="sumaCat.color_riesgo">
+          <div class="categoria-name">{{ sumaCat.categoria }}</div>
+          <div class="categoria-values">
+            <div class="sum-value">Suma: {{ sumaCat.suma }}</div>
+            <div class="avg-value">Promedio: {{ (sumaCat.suma / sumaCat.totalPreguntas).toFixed(2) }}</div>
+            <div class="risk-level" 
+                 [style.background-color]="sumaCat.color_riesgo || '#d9d9d9'"
+                 [style.color]="getColorTexto(sumaCat.color_riesgo || '#d9d9d9')">
+              {{ sumaCat.nivel_riesgo }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Respuestas agrupadas por categoría -->
+    <div class="respuestas-categorias">
+      <h3>Respuestas por categoría</h3>
+      
+      <div class="accordion-container">
+        <div class="accordion-item" *ngFor="let catId of getCategoriasIds(detalleUsuario.respuestas)">
+          <!-- Buscar la categoría actual en la suma por categorías -->
+          <ng-container *ngVar="getCategoriaById(detalleUsuario.usuario.sumasPorCategoria || [], catId) as catSuma">
+            <!-- Usar el header con los datos de la categoría encontrada -->
+            <div class="accordion-header" (click)="toggleAccordion($event)"
+                 [style.border-left]="'5px solid ' + (catSuma?.color_riesgo || '#d9d9d9')">
+              <span class="categoria-title">{{ obtenerNombreCategoria(catId) }}</span>
+              <span class="risk-badge"
+                   [style.background-color]="catSuma?.color_riesgo || '#d9d9d9'"
+                   [style.color]="getColorTexto(catSuma?.color_riesgo || '#d9d9d9')">
+                {{ catSuma?.nivel_riesgo || 'Sin clasificar' }}
+              </span>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="category-summary">
+                <div class="summary-row">
+                  <div class="summary-label">Suma:</div>
+                  <div class="summary-value">{{ catSuma?.suma || 0 }}</div>
+                </div>
+                <div class="summary-row">
+                  <div class="summary-label">Total preguntas:</div>
+                  <div class="summary-value">{{ catSuma?.totalPreguntas || 0 }}</div>
+                </div>
+              </div>
+              <div class="respuestas-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Pregunta</th>
+                      <th>Respuesta</th>
+                      <th>Valor original</th>
+                      <th>Valor ajustado</th>
+                      <th>Tipo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let resp of getRespuestasByCategoria(detalleUsuario.respuestas, catId)">
+                      <td>{{ resp.pregunta_texto }}</td>
+                      <td>{{ resp.respuesta_texto }}</td>
+                      <td>{{ resp.respuesta_valor }}</td>
+                      <td>{{ resp.valor_ajustado }}</td>
+                      <td>{{ esItemInverso(resp.pregunta_orden) ? 'Inverso' : 'Normal' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

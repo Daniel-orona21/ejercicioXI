@@ -1429,3 +1429,104 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
   }
 }
+
+// Estilos para la tabla de usuarios
+.usuarios-table-container {
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  
+  h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: $text-color;
+    font-size: 1.4rem;
+  }
+  
+  .usuarios-table {
+    overflow-x: auto;
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th {
+        background-color: $light-gray;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: $text-color;
+        border-bottom: 2px solid $gray;
+      }
+      
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid $gray;
+        color: $text-color;
+      }
+      
+      tr:last-child td {
+        border-bottom: none;
+      }
+      
+      tr:hover td {
+        background-color: rgba($light-gray, 0.5);
+      }
+      
+      .progress-bar {
+        position: relative;
+        height: 20px;
+        background-color: $gray-200;
+        border-radius: 10px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 150px;
+        
+        .progress-fill {
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          background-color: $primary-color;
+          transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+          position: absolute;
+          width: 100%;
+          text-align: center;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 0.8rem;
+          font-weight: 500;
+          color: $gray-700;
+        }
+      }
+      
+      .risk-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      
+      .view-details-btn {
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+    }
+  }
+}

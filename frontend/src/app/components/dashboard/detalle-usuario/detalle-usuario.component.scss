@@ -1,0 +1,405 @@
+@use "sass:color";
+
+// Variables (mismas que en resultados.component.scss)
+$primary: #3a57e8;
+$secondary: #1e2a4a;
+$success: #28a745;
+$warning: #ffc107;
+$danger: #dc3545;
+$light: #f8f9fa;
+$dark: #343a40;
+$white: #ffffff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+$border-radius: 0.5rem;
+$card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+$transition: all 0.3s ease;
+
+$primary-color: #4a6ff3;
+$secondary-color: #68d4a5;
+$accent-color: #f5a623;
+$text-color: #333;
+$light-gray: #f5f7fa;
+$gray: #e1e4e8;
+$dark-gray: #8c8c8c;
+$box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+.detalle-usuario-container {
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  .loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba($primary-color, 0.3);
+      border-radius: 50%;
+      border-top-color: $primary-color;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 1rem;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  }
+  
+  .error-message {
+    background-color: #fff2f2;
+    border: 1px solid #ffcfcf;
+    border-radius: $border-radius;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    
+    p {
+      color: #d8000c;
+      margin-bottom: 0.5rem;
+    }
+    
+    button {
+      padding: 0.5rem 1rem;
+      background-color: $gray-100;
+      border: 1px solid $gray-300;
+      border-radius: 4px;
+      color: $text-color;
+      cursor: pointer;
+      font-size: 0.9rem;
+      
+      &:hover {
+        background-color: $gray-200;
+      }
+    }
+  }
+  
+  .usuario-detalle {
+    background-color: white;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    overflow: hidden;
+    
+    .usuario-header {
+      padding: 1.5rem;
+      background-color: $light-gray;
+      border-bottom: 1px solid $gray;
+      
+      .volver-btn {
+        margin-bottom: 1rem;
+        
+        button {
+          background: none;
+          border: none;
+          color: $primary-color;
+          font-size: 0.9rem;
+          padding: 0;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+      
+      h2 {
+        margin: 0 0 1rem;
+        font-size: 1.5rem;
+        color: $text-color;
+      }
+      
+      .usuario-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        
+        .info-item {
+          .info-label {
+            font-size: 0.85rem;
+            color: $dark-gray;
+            margin-bottom: 0.25rem;
+          }
+          
+          .info-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: $text-color;
+          }
+        }
+      }
+    }
+  }
+  
+  // Nivel de riesgo total
+  .riesgo-total {
+    margin: 0;
+    padding: 1.5rem;
+    border-bottom: 1px solid $gray;
+    
+    h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      color: $text-color;
+    }
+    
+    .riesgo-content {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+    
+    .riesgo-badge {
+      display: inline-flex;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      align-self: flex-start;
+    }
+    
+    .riesgo-info {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      
+      .riesgo-value {
+        font-weight: 500;
+      }
+    }
+    
+    .criterios-accion {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid $gray-300;
+      
+      h4 {
+        font-size: 1rem;
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        color: $gray-700;
+      }
+      
+      p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: $gray-700;
+        margin: 0;
+        text-align: justify;
+      }
+    }
+  }
+  
+  // Resumen por categoría
+  .categoria-summary {
+    padding: 1.5rem;
+    border-bottom: 1px solid $gray;
+    
+    h3 {
+      margin: 0 0 1rem;
+      font-size: 1.2rem;
+      color: $text-color;
+    }
+    
+    .categoria-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      
+      .categoria-stat-item {
+        background-color: $light-gray;
+        border-radius: $border-radius;
+        padding: 1rem;
+        border-left: 4px solid;
+        
+        .categoria-name {
+          font-weight: 500;
+          margin-bottom: 0.75rem;
+          color: $text-color;
+        }
+        
+        .categoria-values {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          
+          .sum-value, .avg-value {
+            font-size: 0.9rem;
+          }
+          
+          .risk-level {
+            margin-top: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            align-self: flex-start;
+          }
+        }
+      }
+    }
+  }
+  
+  // Respuestas agrupadas por categoría
+  .respuestas-categorias {
+    padding: 1.5rem;
+    
+    h3 {
+      margin: 0 0 1rem;
+      font-size: 1.2rem;
+      color: $text-color;
+    }
+    
+    .accordion-container {
+      .accordion-item {
+        margin-bottom: 0.75rem;
+        border: 1px solid $gray;
+        border-radius: $border-radius;
+        overflow: hidden;
+        
+        .accordion-header {
+          background-color: $light-gray;
+          padding: 1rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          cursor: pointer;
+          user-select: none;
+          
+          .categoria-title {
+            font-weight: 500;
+            color: $text-color;
+          }
+          
+          .risk-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+          }
+          
+          .toggle-icon {
+            font-size: 0.8rem;
+            color: $dark-gray;
+            margin-left: 0.5rem;
+          }
+          
+          &:hover {
+            background-color: darken($light-gray, 3%);
+          }
+        }
+        
+        .accordion-content {
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.3s ease;
+          
+          .category-summary {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem;
+            background-color: $light-gray;
+            border-bottom: 1px solid $gray;
+            
+            .summary-row {
+              display: flex;
+              gap: 0.5rem;
+              
+              .summary-label {
+                font-size: 0.85rem;
+                color: $dark-gray;
+              }
+              
+              .summary-value {
+                font-weight: 500;
+                color: $text-color;
+              }
+            }
+          }
+          
+          .respuestas-table {
+            padding: 1rem;
+            overflow-x: auto;
+            
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              
+              th, td {
+                padding: 0.75rem;
+                text-align: left;
+                border-bottom: 1px solid $gray;
+              }
+              
+              th {
+                background-color: $white;
+                font-weight: 500;
+              }
+              
+              tr:last-child td {
+                border-bottom: none;
+              }
+              
+              tr:hover td {
+                background-color: rgba($light-gray, 0.5);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .detalle-usuario-container {
+    .usuario-detalle {
+      .usuario-header {
+        .usuario-info {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      .categoria-summary {
+        .categoria-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      .respuestas-categorias {
+        .accordion-header {
+          flex-wrap: wrap;
+          
+          .risk-badge {
+            margin-top: 0.5rem;
+          }
+        }
+        
+        .respuestas-table {
+          overflow-x: auto;
+          
+          table {
+            min-width: 600px;
+          }
+        }
+      }
+    }
+  }
+} 
