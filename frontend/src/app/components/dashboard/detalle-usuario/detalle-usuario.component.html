@@ -21,10 +21,6 @@
       <h2>Detalle de usuario</h2>
       <div class="usuario-info">
         <div class="info-item">
-          <div class="info-label">Nombre:</div>
-          <div class="info-value">{{ detalleUsuario.usuario.nombre }}</div>
-        </div>
-        <div class="info-item">
           <div class="info-label">Email:</div>
           <div class="info-value">{{ detalleUsuario.usuario.email }}</div>
         </div>
@@ -36,9 +32,13 @@
           <div class="info-label">Preguntas obligatorias:</div>
           <div class="info-value">{{ detalleUsuario.progreso.respondidasObligatorias }} / {{ detalleUsuario.progreso.totalObligatorias }}</div>
         </div>
-        <div class="info-item" *ngIf="detalleUsuario.progreso.esJefe">
-          <div class="info-label">Preguntas opcionales:</div>
-          <div class="info-value">{{ detalleUsuario.progreso.respondidasOpcionales }} / {{ detalleUsuario.progreso.totalOpcionales }}</div>
+        <div class="info-item">
+          <div class="info-label">Es jefe:</div>
+          <div class="info-value">{{ esJefe(detalleUsuario.respuestas) ? 'Sí' : 'No' }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Brinda servicio a clientes:</div>
+          <div class="info-value">{{ brindaServicioClientes(detalleUsuario.respuestas) ? 'Sí' : 'No' }}</div>
         </div>
       </div>
     </div>
@@ -96,7 +96,7 @@
             <div class="accordion-header" (click)="toggleAccordion($event)"
                  [style.border-left]="'5px solid ' + (catSuma?.color_riesgo || '#d9d9d9')">
               <span class="categoria-title">{{ obtenerNombreCategoria(catId) }}</span>
-              <span class="risk-badge"
+              <span class="risk-badge" *ngIf="obtenerNombreCategoria(catId) !== 'Responsabilidades'"
                    [style.background-color]="catSuma?.color_riesgo || '#d9d9d9'"
                    [style.color]="getColorTexto(catSuma?.color_riesgo || '#d9d9d9')">
                 {{ catSuma?.nivel_riesgo || 'Sin clasificar' }}
@@ -104,7 +104,7 @@
               <span class="toggle-icon">▼</span>
             </div>
             <div class="accordion-content">
-              <div class="category-summary">
+              <div class="category-summary" *ngIf="obtenerNombreCategoria(catId) !== 'Responsabilidades'">
                 <div class="summary-row">
                   <div class="summary-label">Suma:</div>
                   <div class="summary-value">{{ catSuma?.suma || 0 }}</div>
@@ -120,18 +120,19 @@
                     <tr>
                       <th>Pregunta</th>
                       <th>Respuesta</th>
-                      <th>Valor original</th>
-                      <th>Valor ajustado</th>
-                      <th>Tipo</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr *ngFor="let resp of getRespuestasByCategoria(detalleUsuario.respuestas, catId)">
                       <td>{{ resp.pregunta_texto }}</td>
-                      <td>{{ resp.respuesta_texto }}</td>
-                      <td>{{ resp.respuesta_valor }}</td>
-                      <td>{{ resp.valor_ajustado }}</td>
-                      <td>{{ esItemInverso(resp.pregunta_orden) ? 'Inverso' : 'Normal' }}</td>
+                      <td>
+                        <ng-container *ngIf="catId === 0 || catId === null">
+                          {{ resp.respuesta_valor === 4 ? 'Sí' : 'No' }}
+                        </ng-container>
+                        <ng-container *ngIf="catId !== 0 && catId !== null">
+                          {{ resp.respuesta_texto }}
+                        </ng-container>
+                      </td>
                     </tr>
                   </tbody>
                 </table>

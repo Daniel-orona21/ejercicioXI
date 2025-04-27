@@ -195,7 +195,7 @@ export class DetalleUsuarioComponent implements OnInit {
   // Helper para obtener el nombre de una categoría
   obtenerNombreCategoria(categoriaId: number): string {
     const categoria = this.categorias.find(c => c.id === categoriaId);
-    return categoria ? categoria.nombre : 'Sin categoría';
+    return categoria ? categoria.nombre : 'Responsabilidades';
   }
   
   // Obtener IDs únicos de categorías para un conjunto de respuestas
@@ -271,5 +271,27 @@ export class DetalleUsuarioComponent implements OnInit {
   getCategoriaById(categoriasUsuario: SumaCategoriaRiesgo[] | undefined, categoriaId: number): SumaCategoriaRiesgo | undefined {
     if (!categoriasUsuario) return undefined;
     return categoriasUsuario.find(cat => cat.categoria_id === categoriaId);
+  }
+  
+  /**
+   * Verifica si el usuario es jefe basado en la respuesta a la pregunta 70
+   * @param respuestas Array de respuestas del usuario
+   * @returns true si el usuario es jefe (valor 4), false en caso contrario
+   */
+  esJefe(respuestas: any[]): boolean {
+    if (!respuestas || !respuestas.length) return false;
+    const respuestaJefe = respuestas.find(r => r.pregunta_orden === 70);
+    return respuestaJefe && respuestaJefe.respuesta_valor === 4;
+  }
+
+  /**
+   * Verifica si el usuario brinda servicio a clientes basado en la pregunta 65
+   * @param respuestas Array de respuestas del usuario
+   * @returns true si el usuario brinda servicio a clientes (valor 4), false en caso contrario
+   */
+  brindaServicioClientes(respuestas: any[]): boolean {
+    if (!respuestas || !respuestas.length) return false;
+    const respuestaServicio = respuestas.find(r => r.pregunta_orden === 65);
+    return respuestaServicio && respuestaServicio.respuesta_valor === 4;
   }
 } 

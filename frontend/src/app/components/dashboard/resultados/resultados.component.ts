@@ -200,7 +200,7 @@ export class ResultadosComponent implements OnInit {
   // Helper para obtener el nombre de una categoría
   obtenerNombreCategoria(categoriaId: number): string {
     const categoria = this.categorias.find(c => c.id === categoriaId);
-    return categoria ? categoria.nombre : 'Sin categoría';
+    return categoria ? categoria.nombre : 'Responsabilidades';
   }
   
   // Obtener IDs únicos de categorías para un conjunto de respuestas

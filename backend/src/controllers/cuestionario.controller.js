@@ -555,7 +555,7 @@ const CuestionarioController = {
         {
           id: 4,
           nombre: 'Liderazgo y relaciones en el trabajo',
-          preguntas: [31, 32, 33, 34, 39, 40, 42, 45, 46, 57, 58, 59, 60, 61, 62, 63, 64, 71, 72, 73, 74]
+          preguntas: [31, 32, 33, 34, 37, 38, 39, 40 ,41, 42, 43, 44, 45, 46, 57, 58, 59, 60, 61, 62, 63, 64, 71, 72, 73, 74]
         },
         {
           id: 5,
