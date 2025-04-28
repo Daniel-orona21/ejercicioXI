@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 
 // Cargar variables de entorno
 dotenv.config();
+console.log('EMAIL_USER desde index.js:', process.env.EMAIL_USER);
 
 const app = express();
 
