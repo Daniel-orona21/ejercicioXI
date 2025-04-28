@@ -224,19 +224,28 @@ export class ResultadosComponent implements OnInit {
     return color_riesgo || '#d9d9d9';
   }
   
-  // Obtener color de texto para contrastar con el fondo
+  // Obtener color basado en el nivel de riesgo
+  getColorPorNivel(nivel: string): string {
+    switch(nivel) {
+      case 'Nulo o despreciable':
+        return '#87CEEB'; // Light blue
+      case 'Bajo':
+        return '#8BC34A'; // Green
+      case 'Medio':
+        return '#FFFF00'; // Yellow
+      case 'Alto':
+        return '#FFA500'; // Orange
+      case 'Muy alto':
+        return '#FF0000'; // Red
+      default:
+        return '#cccccc';
+    }
+  }
+  
+  // Obtener color de texto que contraste con el fondo
   getColorTexto(color_fondo: string): string {
-    // Convertir hex a RGB para calcular la luminosidad
-    const hex = color_fondo.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    
-    // Calcular la luminosidad (percepción humana de brillo)
-    const luminosidad = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
-    // Usar texto oscuro para fondos claros y texto claro para fondos oscuros
-    return luminosidad > 0.5 ? '#000000' : '#ffffff';
+    // Always return white for risk badges
+    return '#ffffff';
   }
   
   // Obtener criterios para la toma de acciones según nivel de riesgo

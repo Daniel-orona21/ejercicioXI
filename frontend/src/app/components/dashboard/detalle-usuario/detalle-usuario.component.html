@@ -68,19 +68,21 @@
     <div class="categoria-summary" *ngIf="detalleUsuario.usuario.sumasPorCategoria && detalleUsuario.usuario.sumasPorCategoria.length > 0">
       <h3>Resumen por categoría</h3>
       <div class="categoria-stats">
-        <div class="categoria-stat-item" *ngFor="let sumaCat of detalleUsuario.usuario.sumasPorCategoria"
-             [style.border-color]="sumaCat.color_riesgo">
-          <div class="categoria-name">{{ sumaCat.categoria }}</div>
-          <div class="categoria-values">
-            <div class="sum-value">Suma: {{ sumaCat.suma }}</div>
-            <div class="avg-value">Promedio: {{ (sumaCat.suma / sumaCat.totalPreguntas).toFixed(2) }}</div>
-            <div class="risk-level" 
-                 [style.background-color]="sumaCat.color_riesgo || '#d9d9d9'"
-                 [style.color]="getColorTexto(sumaCat.color_riesgo || '#d9d9d9')">
-              {{ sumaCat.nivel_riesgo }}
+        <ng-container *ngFor="let sumaCat of detalleUsuario.usuario.sumasPorCategoria">
+          <div class="categoria-stat-item" *ngIf="sumaCat.categoria !== 'Responsabilidades'"
+               [style.border-color]="sumaCat.color_riesgo">
+            <div class="categoria-name">{{ sumaCat.categoria }}</div>
+            <div class="categoria-values">
+              <div class="sum-value">Suma: {{ sumaCat.suma }}</div>
+              <div class="avg-value">Promedio: {{ (sumaCat.suma / sumaCat.totalPreguntas).toFixed(2) }}</div>
+              <div class="risk-level" 
+                   [style.background-color]="sumaCat.color_riesgo || '#FF9800'"
+                   [style.color]="getColorTexto(sumaCat.color_riesgo || '#d9d9d9')">
+                {{ sumaCat.nivel_riesgo }}
+              </div>
             </div>
           </div>
-        </div>
+        </ng-container>
       </div>
     </div>
     

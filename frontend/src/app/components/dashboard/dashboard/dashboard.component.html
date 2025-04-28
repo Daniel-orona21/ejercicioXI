@@ -28,6 +28,12 @@
             <span *ngIf="!isSidebarCollapsed">Resultados</span>
           </div>
         </li>
+        <li [routerLink]="['/dashboard/datos-generales']" routerLinkActive="active">
+          <div class="nav-item">
+            <i class="fas fa-chart-pie"></i>
+            <span *ngIf="!isSidebarCollapsed">Datos Generales</span>
+          </div>
+        </li>
         <li [routerLink]="['/dashboard/cuestionarios']" routerLinkActive="active">
           <div class="nav-item">
             <i class="fas fa-tasks"></i>
@@ -61,23 +67,15 @@
         </p>
       </div>
       <div class="header-right">
-        <div class="dropdown-container">
-          <button class="header-button download-btn" [class.loading]="isGeneratingPdf" [disabled]="isGeneratingPdf">
+        <div class="dropdown-container" *ngIf="isDatosGeneralesPage || isDetalleUsuarioPage">
+          <button class="header-button download-btn" [class.loading]="isGeneratingPdf" [disabled]="isGeneratingPdf" (click)="descargarReporte()">
             <span *ngIf="!isGeneratingPdf">
-              <i class="fas fa-file-download"></i> Descargar Reporte <i class="fas fa-chevron-down"></i>
+              <i class="fas fa-file-download"></i> Descargar Reporte
             </span>
             <span *ngIf="isGeneratingPdf" class="loading-indicator">
               <i class="fas fa-spinner fa-spin"></i> Generando PDF...
             </span>
           </button>
-          <div class="dropdown-menu" *ngIf="!isGeneratingPdf">
-            <a class="dropdown-item" (click)="descargarReportePersonal()">
-              <i class="fas fa-user"></i> Mi Reporte
-            </a>
-            <a class="dropdown-item" (click)="descargarReporteGeneral()">
-              <i class="fas fa-users"></i> Reporte General
-            </a>
-          </div>
         </div>
       </div>
     </header>

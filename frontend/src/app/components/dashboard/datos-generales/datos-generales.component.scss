@@ -1,0 +1,370 @@
+// Variables
+$primary-color: #3f51b5;
+$secondary-color: #ff4081;
+$text-color: #333;
+$light-gray: #f5f5f5;
+$medium-gray: #e0e0e0;
+$dark-gray: #757575;
+$card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+$transition: all 0.3s ease;
+
+// Colores de riesgo
+$riesgo-nulo: #2b9bb1;
+$riesgo-bajo: #8BC34A;
+$riesgo-medio: #FFC107;
+$riesgo-alto: #FF9800;
+$riesgo-muy-alto: #F44336;
+
+// Estilos globales
+.datos-generales-container {
+  padding: 20px;
+  color: $text-color;
+  font-family: 'Roboto', sans-serif;
+}
+
+.visualization-container {
+  background-color: white;
+}
+
+.data-visualization {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+}
+
+// Estilos para los estados de carga y error
+.loading-indicator, .error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  
+  .spinner {
+    border: 4px solid rgba($primary-color, 0.1);
+    border-left-color: $primary-color;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  p {
+    margin: 15px 0;
+    font-size: 16px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: $transition;
+    
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Contenido principal del dashboard
+.dashboard-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  
+  .dashboard-title {
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 500;
+    color: $primary-color;
+    border-bottom: 2px solid $light-gray;
+    padding-bottom: 15px;
+  }
+}
+
+// Tarjetas de estadísticas
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+  
+  .stat-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: $card-shadow;
+    display: flex;
+    align-items: center;
+    transition: $transition;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: rgba($primary-color, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 20px;
+      
+      i {
+        font-size: 24px;
+        color: $primary-color;
+      }
+    }
+    
+    .stat-content {
+      flex: 1;
+      
+      h3 {
+        margin: 0 0 10px 0;
+        font-size: 16px;
+        color: $dark-gray;
+        font-weight: 500;
+      }
+      
+      .stat-number {
+        font-size: 28px;
+        font-weight: 600;
+        color: $text-color;
+        margin-bottom: 10px;
+      }
+    }
+    
+    &.riesgo-card {
+      .nivel-riesgo-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-weight: 500;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Barras de progreso
+.progress-container {
+  height: 18px;
+  background-color: $light-gray;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 5px;
+  
+  .progress-bar {
+    height: 100%;
+    background-color: $riesgo-medio;
+    transition: width 0.5s ease;
+  }
+  
+  .progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+  }
+}
+
+// Sección de criterios para la toma de acciones
+.criterios-accion {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: $card-shadow;
+  margin-bottom: 30px;
+  
+  h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 500;
+    color: $primary-color;
+  }
+  
+  .criterios-content {
+    background-color: rgba($primary-color, 0.05);
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid $primary-color;
+    
+    p {
+      margin: 0;
+      line-height: 1.6;
+    }
+  }
+}
+
+// Secciones de datos
+.data-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: $card-shadow;
+  margin-bottom: 30px;
+  
+  h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 500;
+    color: $primary-color;
+  }
+}
+
+// Distribución por nivel de riesgo
+.distribution-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  
+  .distribution-item {
+    padding: 15px;
+    border-radius: 6px;
+    background-color: $light-gray;
+    border-left: 4px solid #ccc;
+    transition: $transition;
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .item-label {
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    
+    .item-value {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .item-percentage {
+      font-size: 14px;
+      color: $dark-gray;
+    }
+  }
+}
+
+// Tabla de promedios por categoría
+.table-container {
+  overflow-x: auto;
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid $medium-gray;
+    }
+    
+    th {
+      background-color: $light-gray;
+      font-weight: 500;
+      color: $dark-gray;
+    }
+    
+    tr:hover {
+      background-color: rgba($primary-color, 0.03);
+    }
+    
+    .nivel-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: white;
+    }
+    
+    .progress-container {
+      width: 150px;
+      margin-top: 0;
+    }
+  }
+}
+
+// Matriz de riesgos
+.risk-matrix {
+  border: 1px solid $medium-gray;
+  border-radius: 6px;
+  overflow: hidden;
+  
+  .matrix-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    border-bottom: 1px solid $medium-gray;
+    border-left: 4px solid transparent;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &.header-row {
+      background-color: white;
+      border-left: 4px solid $light-gray;
+    }
+  }
+  
+  .matrix-cell {
+    padding: 15px;
+    line-height: 1.5;
+    
+    &.header-cell {
+      font-weight: 500;
+      color: $dark-gray;
+    }
+    
+    &.risk-level {
+      .nivel-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .matrix-row {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .matrix-cell {
+    border-bottom: 1px solid $medium-gray;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}

@@ -22,10 +22,12 @@ $border-radius: 0.5rem;
 $card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 $transition: all 0.3s ease;
 
-// Risk level colors
-$risk-bajo: $success;
-$risk-moderado: $warning;
-$risk-alto: $danger;
+// Risk level colors - Updated with more solid colors from the image
+$risk-nulo: #87CEEB; // Light blue
+$risk-bajo: #8BC34A; // Green
+$risk-medio: #FFFF00; // Yellow
+$risk-alto: #FFA500; // Orange
+$risk-muy-alto: #FF0000; // Red
 
 $primary-color: #4a6ff3;
 $secondary-color: #68d4a5;
@@ -34,7 +36,7 @@ $text-color: #333;
 $light-gray: #f5f7fa;
 $gray: #e1e4e8;
 $dark-gray: #8c8c8c;
-$box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+$box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 
 .empty-results {
   min-height: 400px;
@@ -43,79 +45,166 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   align-items: center;
 }
 
+
 .resultados-container {
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 1400px;
+  padding: 20px;
+  max-width: 1200px;
   margin: 0 auto;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  
+
   h2 {
-    margin-bottom: 1.5rem;
-    color: $text-color;
-    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
   }
-  
+
+  // Estado de carga
   .loading-indicator {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
-    
+    padding: 40px;
+
     .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
       width: 40px;
       height: 40px;
-      border: 3px solid rgba($primary-color, 0.3);
-      border-radius: 50%;
-      border-top-color: $primary-color;
-      animation: spin 1s ease-in-out infinite;
-      margin-bottom: 1rem;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
     }
-    
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   }
-  
+
+  // Mensaje de error
   .error-message {
-    background-color: #fff2f2;
-    border: 1px solid #ffcfcf;
-    border-radius: $border-radius;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    
-    p {
-      color: #d8000c;
-      margin-bottom: 0.5rem;
-    }
-    
-    button {
-      padding: 0.25rem 0.75rem;
-      background-color: #f8f9fa;
-      border: 1px solid #d8000c;
-      border-radius: 4px;
-      color: #d8000c;
-      cursor: pointer;
-      
-      &:hover {
-        background-color: #ffeaea;
-    }
-  }
-  }
-  
-  .empty-results {
-    background-color: $light-gray;
-    border-radius: $border-radius;
-    padding: 2rem;
+    background-color: #ffebee;
+    color: #d32f2f;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
     text-align: center;
-    
-    p {
-      color: $dark-gray;
-      font-size: 1.1rem;
+
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #d32f2f;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #b71c1c;
+      }
     }
   }
-  
+
+  // Tabla de usuarios
+  .usuarios-table-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    
+    .empty-results {
+      padding: 40px;
+      text-align: center;
+      color: #757575;
+    }
+    
+    .usuarios-table {
+      width: 100%;
+      overflow-x: auto;
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        
+        th, td {
+          padding: 15px;
+          text-align: left;
+          border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+          background-color: #f5f5f5;
+          font-weight: 600;
+          color: #333;
+        }
+        
+        tr:last-child td {
+          border-bottom: none;
+        }
+        
+        tr:hover {
+          background-color: #f9f9f9;
+        }
+      }
+    }
+  }
+
+  // Barra de progreso
+  .progress-bar {
+    position: relative;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    
+    .progress-fill {
+      height: 100%;
+      background-color: #4caf50;
+    }
+    
+    .progress-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  }
+
+  // Badge de nivel de riesgo
+  .risk-badge {
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+    color: #ffffff;
+    margin: 0 auto;
+  }
+
+  // Botón de ver detalle
+  .view-details-btn {
+    padding: 8px 16px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    
+    &:hover {
+      background-color: #1976d2;
+    }
+  }
+
   .usuarios-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
@@ -350,11 +439,11 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
           background-color: $white;
           
           .card-header {
-            background-color: $risk-moderado;
+            background-color: $risk-medio;
           }
           
           .risk-level {
-            color: $risk-moderado;
+            color: $risk-medio;
           }
         }
         
@@ -459,7 +548,7 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
                 }
                 
                 &.moderado {
-                  background-color: $risk-moderado;
+                  background-color: $risk-medio;
                 }
                 
                 &.alto {
@@ -516,13 +605,13 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
           }
           
           &.moderado {
-            border-top: 4px solid $risk-moderado;
+            border-top: 4px solid $risk-medio;
             
             .card-header {
-              background-color: rgba($risk-moderado, 0.1);
+              background-color: rgba($risk-medio, 0.1);
               
               .risk-badge {
-                background-color: $risk-moderado;
+                background-color: $risk-medio;
               }
             }
           }
@@ -689,7 +778,7 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
                 }
                 
                 &.moderado td:first-child {
-                  color: $risk-moderado;
+                  color: $risk-medio;
                   font-weight: 500;
                 }
                 
@@ -716,7 +805,7 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
                 }
                 
                 &.moderado .risk-dot {
-                  background-color: $risk-moderado;
+                  background-color: $risk-medio;
                 }
                 
                 &.alto .risk-dot {
@@ -770,7 +859,7 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
               }
               
               &.moderado {
-                background-color: $risk-moderado;
+                background-color: $risk-medio;
               }
               
               &.alto {
@@ -822,7 +911,7 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
           }
           
           &.moderado .risk-indicator {
-            background-color: $risk-moderado;
+            background-color: $risk-medio;
           }
           
           &.alto .risk-indicator {
@@ -1432,7 +1521,7 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 
 // Estilos para la tabla de usuarios
 .usuarios-table-container {
-  padding: 1.5rem;
+  padding: 2rem;
   background-color: white;
   border-radius: $border-radius;
   box-shadow: $box-shadow;
@@ -1440,8 +1529,22 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   h2 {
     margin-top: 0;
     margin-bottom: 1.5rem;
-    color: $text-color;
-    font-size: 1.4rem;
+    color: $secondary;
+    font-size: 1.6rem;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 0.75rem;
+    
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(to right, $primary-color, lighten($primary-color, 20%));
+      border-radius: 3px;
+    }
   }
   
   .usuarios-table {
@@ -1449,39 +1552,53 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     
     table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       
       th {
         background-color: $light-gray;
-        padding: 1rem;
+        padding: 1.2rem 1.5rem;
         text-align: left;
         font-weight: 600;
-        color: $text-color;
-        border-bottom: 2px solid $gray;
+        color: $secondary;
+        border-bottom: 2px solid $gray-300;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
       }
       
       td {
-        padding: 1rem;
-        border-bottom: 1px solid $gray;
-        color: $text-color;
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid $gray-200;
+        color: $gray-800;
+        font-size: 0.95rem;
+        vertical-align: middle;
       }
       
       tr:last-child td {
         border-bottom: none;
       }
       
-      tr:hover td {
-        background-color: rgba($light-gray, 0.5);
+      tr {
+        transition: all 0.2s ease;
+        
+        &:hover td {
+          background-color: rgba($primary-color, 0.03);
+        }
       }
       
       .progress-bar {
         position: relative;
-        height: 20px;
+        height: 25px;
         background-color: $gray-200;
-        border-radius: 10px;
+        border-radius: 6px;
         overflow: hidden;
         width: 100%;
-        max-width: 150px;
+        max-width: 180px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
         
         .progress-fill {
           position: absolute;
@@ -1490,6 +1607,7 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
           height: 100%;
           background-color: $primary-color;
           transition: width 0.3s ease;
+          border-radius: 6px;
         }
         
         .progress-text {
@@ -1499,34 +1617,87 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
           left: 0;
           top: 50%;
           transform: translateY(-50%);
-          font-size: 0.8rem;
-          font-weight: 500;
-          color: $gray-700;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: white;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
       }
       
       .risk-badge {
         display: inline-block;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-        font-weight: 500;
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        color: white;
       }
       
       .view-details-btn {
         background-color: $primary-color;
         color: white;
         border: none;
-        border-radius: 4px;
-        padding: 8px 12px;
-        font-size: 0.9rem;
+        border-radius: 6px;
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        font-weight: 500;
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         
         &:hover {
           background-color: darken($primary-color, 10%);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+        }
+        
+        &:before {
+          content: '\f06e';
+          font-family: 'Font Awesome 5 Free';
+          font-weight: 900;
+          font-size: 0.85rem;
         }
       }
     }
+  }
+}
+
+// Obtener color basado en el nivel de riesgo
+@function getColorPorNivel($nivel) {
+  @if $nivel == 'Nulo o despreciable' {
+    @return $risk-nulo; // Light blue
+  } @else if $nivel == 'Bajo' {
+    @return $risk-bajo; // Green
+  } @else if $nivel == 'Medio' {
+    @return $risk-medio; // Yellow
+  } @else if $nivel == 'Alto' {
+    @return $risk-alto; // Orange
+  } @else if $nivel == 'Muy alto' {
+    @return $risk-muy-alto; // Red
+  } @else {
+    @return #cccccc;
+  }
+}
+
+// Obtener color de texto que contraste con el fondo
+@function getColorTexto($color_fondo) {
+  // Always return white for risk badges
+  @return $white;
+}
+
+// Ensure risk badges have white text
+.risk-badge {
+  color: $white !important;
+}
+
+// Ensure progress text is white
+.progress-bar {
+  .progress-text {
+    color: $white !important;
   }
 }

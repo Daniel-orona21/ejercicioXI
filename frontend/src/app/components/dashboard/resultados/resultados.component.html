@@ -44,8 +44,8 @@
             </td>
             <td>
               <span class="risk-badge" 
-                    [style.background-color]="item.usuario.color_riesgo_total || '#d9d9d9'"
-                    [style.color]="getColorTexto(item.usuario.color_riesgo_total || '#d9d9d9')">
+                    [style.background-color]="getColorPorNivel(item.usuario.nivel_riesgo_total || 'Sin clasificar')"
+                    [style.color]="'#ffffff'">
                 {{ item.usuario.nivel_riesgo_total || 'Sin clasificar' }}
               </span>
             </td>

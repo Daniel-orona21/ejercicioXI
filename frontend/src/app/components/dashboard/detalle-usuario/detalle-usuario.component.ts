@@ -216,17 +216,8 @@ export class DetalleUsuarioComponent implements OnInit {
   
   // Obtener color de texto para contrastar con el fondo
   getColorTexto(color_fondo: string): string {
-    // Convertir hex a RGB para calcular la luminosidad
-    const hex = color_fondo.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    
-    // Calcular la luminosidad (percepción humana de brillo)
-    const luminosidad = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
-    // Usar texto oscuro para fondos claros y texto claro para fondos oscuros
-    return luminosidad > 0.5 ? '#000000' : '#ffffff';
+    // Always return white for risk badges
+    return '#ffffff';
   }
   
   // Obtener criterios para la toma de acciones según nivel de riesgo

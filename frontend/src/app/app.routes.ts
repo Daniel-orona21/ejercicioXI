@@ -6,6 +6,7 @@ import { CuestionariosComponent } from './components/dashboard/cuestionarios/cue
 import { AjustesComponent } from './components/dashboard/ajustes/ajustes.component';
 import { ContestarComponent } from './components/dashboard/cuestionarios/contestar/contestar.component';
 import { DetalleUsuarioComponent } from './components/dashboard/detalle-usuario/detalle-usuario.component';
+import { DatosGeneralesComponent } from './components/dashboard/datos-generales/datos-generales.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -19,6 +20,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'resultados', pathMatch: 'full' },
       { path: 'resultados', component: ResultadosComponent },
       { path: 'detalle-usuario/:id', component: DetalleUsuarioComponent },
+      { path: 'datos-generales', component: DatosGeneralesComponent },
       { path: 'cuestionarios', component: CuestionariosComponent },
       { path: 'cuestionarios/contestar', component: ContestarComponent },
       { path: 'ajustes', component: AjustesComponent }

@@ -22,6 +22,13 @@ $border-radius: 0.5rem;
 $card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 $transition: all 0.3s ease;
 
+// Risk level colors - Updated with more solid colors
+$risk-nulo: #2b9bb1; // Light blue
+$risk-bajo: #8BC34A; // Green
+$risk-medio: #FFC107; // Yellow
+$risk-alto: #FF9800; // Orange
+$risk-muy-alto: #F44336; // Red
+
 $primary-color: #4a6ff3;
 $secondary-color: #68d4a5;
 $accent-color: #f5a623;
@@ -29,7 +36,7 @@ $text-color: #333;
 $light-gray: #f5f7fa;
 $gray: #e1e4e8;
 $dark-gray: #8c8c8c;
-$box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+$box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 
 .detalle-usuario-container {
   padding: 1.5rem;
@@ -172,6 +179,7 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       font-size: 1rem;
       margin-bottom: 0.5rem;
       align-self: flex-start;
+      color: $white !important;
     }
     
     .riesgo-info {
@@ -248,8 +256,7 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
             font-size: 0.85rem;
-            font-weight: 500;
-            align-self: flex-start;
+            color: $white !important;
           }
         }
       }
@@ -401,5 +408,40 @@ $box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
       }
     }
+  }
+}
+
+// Obtener color basado en el nivel de riesgo
+@function getColorPorNivel($nivel) {
+  @if $nivel == 'Nulo o despreciable' {
+    @return $risk-nulo; // Light blue
+  } @else if $nivel == 'Bajo' {
+    @return $risk-bajo; // Green
+  } @else if $nivel == 'Medio' {
+    @return $risk-medio; // Yellow
+  } @else if $nivel == 'Alto' {
+    @return $risk-alto; // Orange
+  } @else if $nivel == 'Muy alto' {
+    @return $risk-muy-alto; // Red
+  } @else {
+    @return #cccccc;
+  }
+}
+
+// Obtener color de texto que contraste con el fondo
+@function getColorTexto($color_fondo) {
+  // Always return white for risk badges
+  @return $white;
+}
+
+// Ensure risk badges have white text
+.risk-badge {
+  color: $white !important;
+}
+
+// Ensure progress text is white
+.progress-bar {
+  .progress-text {
+    color: $white !important;
   }
 } 
