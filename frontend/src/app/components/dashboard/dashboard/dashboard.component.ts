@@ -172,7 +172,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         fecha.style.color = '#666';
         titleSection.appendChild(fecha);
         headerRow.appendChild(titleSection);
-        // Información del usuario
+        tempContainer.appendChild(headerRow);
+        // Información del usuario SOLO UNA VEZ
         const infoUsuario = document.createElement('div');
         infoUsuario.style.backgroundColor = '#f8f9fa';
         infoUsuario.style.borderRadius = '7px';
