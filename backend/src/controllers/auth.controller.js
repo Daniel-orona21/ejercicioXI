@@ -4,7 +4,7 @@ const User = require('../models/user.model');
 
 exports.register = async (req, res) => {
   try {
-    const { nombre, email, password } = req.body;
+    const { nombre, email, password, rol } = req.body;
 
     // Verificar si el usuario ya existe
     const existingUser = await User.findByEmail(email);
@@ -20,12 +20,13 @@ exports.register = async (req, res) => {
     const userId = await User.create({
       nombre,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      rol
     });
 
     // Generar token
     const token = jwt.sign(
-      { id: userId, email },
+      { id: userId, email, rol },
       process.env.JWT_SECRET || 'tu_secreto_jwt',
       { expiresIn: '1d' }
     );
@@ -33,7 +34,7 @@ exports.register = async (req, res) => {
     res.status(201).json({
       message: 'Usuario registrado exitosamente',
       token,
-      user: { id: userId, nombre, email }
+      user: { id: userId, nombre, email, rol }
     });
   } catch (error) {
     res.status(500).json({ message: 'Error en el servidor', error: error.message });
@@ -58,7 +59,7 @@ exports.login = async (req, res) => {
 
     // Generar token
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, rol: user.rol },
       process.env.JWT_SECRET || 'tu_secreto_jwt',
       { expiresIn: '1d' }
     );
@@ -66,7 +67,7 @@ exports.login = async (req, res) => {
     res.json({
       message: 'Login exitoso',
       token,
-      user: { id: user.id, nombre: user.nombre, email: user.email }
+      user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol }
     });
   } catch (error) {
     res.status(500).json({ message: 'Error en el servidor', error: error.message });

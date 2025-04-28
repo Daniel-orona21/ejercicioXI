@@ -2,10 +2,10 @@ const db = require('../config/db.config');
 
 class User {
   static async create(userData) {
-    const { nombre, email, password } = userData;
-    const query = 'INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)';
+    const { nombre, email, password, rol } = userData;
+    const query = 'INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)';
     return new Promise((resolve, reject) => {
-      db.query(query, [nombre, email, password], (error, results) => {
+      db.query(query, [nombre, email, password, rol], (error, results) => {
         if (error) reject(error);
         resolve(results.insertId);
       });

@@ -9,6 +9,7 @@ interface AuthResponse {
     id: number;
     nombre: string;
     email: string;
+    rol: string;
   };
   token: string;
 }
@@ -17,6 +18,7 @@ interface User {
   id: number;
   nombre: string;
   email: string;
+  rol: string;
 }
 
 @Injectable({
@@ -95,5 +97,11 @@ export class AuthService {
     }
     
     return of(null);
+  }
+
+  // Verificar si el usuario tiene un rol específico
+  hasRole(role: string): boolean {
+    const user = this.currentUserSubject.value;
+    return user && user.rol === role;
   }
 }
