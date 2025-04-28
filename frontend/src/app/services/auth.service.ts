@@ -50,6 +50,10 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, credentials)
       .pipe(
         tap(response => {
+          // Asignar rol por defecto si no existe
+          if (!response.user.rol) {
+            response.user.rol = 'usuario';
+          }
           if (this.isBrowser) {
             localStorage.setItem('currentUser', JSON.stringify(response.user));
             localStorage.setItem('token', response.token);
@@ -83,13 +87,16 @@ export class AuthService {
     
     const userData = localStorage.getItem('currentUser');
     if (userData) {
-      return of(JSON.parse(userData));
+      const user = JSON.parse(userData);
+      if (!user.rol) user.rol = 'usuario';
+      return of(user);
     }
     
     // Si no hay datos en localStorage pero hay un token, intentar obtener los datos del servidor
     if (this.getToken()) {
       return this.http.get<User>(`${environment.apiUrl}/users/me`).pipe(
         tap(user => {
+          if (!user.rol) user.rol = 'usuario';
           localStorage.setItem('currentUser', JSON.stringify(user));
           this.currentUserSubject.next(user);
         })

@@ -1,8 +1,9 @@
 import { Component, Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../services/auth.service';
 
 // Directiva ngVar (igual que en el componente de resultados)
 @Directive({
@@ -108,11 +109,18 @@ export class DetalleUsuarioComponent implements OnInit {
   tablaCalificacionRiesgo: CategoriaCalificacion[] = [];
   cargando: boolean = false;
   error: string | null = null;
+  usuarioActual: any = null;
   
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient
-  ) {}
+    private http: HttpClient,
+    private router: Router,
+    private authService: AuthService
+  ) {
+    this.authService.currentUser$.subscribe(user => {
+      this.usuarioActual = user;
+    });
+  }
   
   ngOnInit(): void {
     this.usuarioId = Number(this.route.snapshot.paramMap.get('id'));
@@ -284,5 +292,9 @@ export class DetalleUsuarioComponent implements OnInit {
     if (!respuestas || !respuestas.length) return false;
     const respuestaServicio = respuestas.find(r => r.pregunta_orden === 65);
     return respuestaServicio && respuestaServicio.respuesta_valor === 4;
+  }
+
+  irACuestionario(): void {
+    this.router.navigate(['/dashboard/cuestionarios']);
   }
 } 

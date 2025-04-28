@@ -444,4 +444,68 @@ $box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
   .progress-text {
     color: $white !important;
   }
+}
+
+.no-evaluacion-card {
+  max-width: none;
+  margin:  0 auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 32px rgba(60, 72, 88, 0.10), 0 1.5px 6px rgba(60, 72, 88, 0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 50vh;
+}
+
+.icon-container {
+  background: #e3f2fd;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.icon-container i {
+  color: #3f51b5;
+  font-size: 2.5rem;
+}
+
+.no-evaluacion-title {
+  color: #3f51b5;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+}
+
+.no-evaluacion-text {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.btn-ir-cuestionario {
+  background: linear-gradient(90deg, #3f51b5 60%, #5c6bc0 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.85rem 2.2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(60, 72, 88, 0.10);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.btn-ir-cuestionario:hover {
+  background: linear-gradient(90deg, #303f9f 60%, #3949ab 100%);
+  box-shadow: 0 4px 16px rgba(60, 72, 88, 0.13);
 } 

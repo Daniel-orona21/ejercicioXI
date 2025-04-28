@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   user: any = null;
   isSidebarCollapsed = false;
   private selectTabListener: any;
-  private isResultadosPage = false;
+  public isResultadosPage = false;
   public isDatosGeneralesPage = false;
   public isDetalleUsuarioPage = false;
   
@@ -149,30 +149,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
         tempContainer.style.borderRadius = '10px';
         tempContainer.style.boxShadow = '0 0 12px rgba(0,0,0,0.08)';
         tempContainer.style.color = '#222';
-        // Header
-        const headerRow = document.createElement('div');
-        headerRow.style.display = 'flex';
-        headerRow.style.justifyContent = 'space-between';
-        headerRow.style.alignItems = 'center';
-        headerRow.style.marginBottom = '28px';
-        headerRow.style.borderBottom = '2px solid #3f51b5';
-        headerRow.style.paddingBottom = '14px';
+        // TÍTULO Y SUBTÍTULO AGRUPADOS
         const titleSection = document.createElement('div');
+        titleSection.style.marginBottom = '28px';
+        titleSection.style.borderBottom = '2px solid #3f51b5';
+        titleSection.style.paddingBottom = '14px';
+        // Título
         const titulo = document.createElement('h1');
         titulo.textContent = 'Reporte de Evaluación NOM-035';
         titulo.style.color = '#3f51b5';
         titulo.style.margin = '0 0 7px 0';
         titulo.style.fontSize = '26px';
         titulo.style.letterSpacing = '0.5px';
+        titulo.style.textAlign = 'left';
         titleSection.appendChild(titulo);
-        const fecha = document.createElement('p');
-        fecha.textContent = `Fecha: ${new Date().toLocaleDateString()}`;
-        fecha.style.fontSize = '14px';
-        fecha.style.margin = '0';
-        fecha.style.color = '#666';
-        titleSection.appendChild(fecha);
-        headerRow.appendChild(titleSection);
-        tempContainer.appendChild(headerRow);
+        // Subtítulo
+        const subtitulo = document.createElement('div');
+        subtitulo.textContent = 'IDENTIFICACIÓN Y ANÁLISIS DE LOS FACTORES DE RIESGO PSICOSOCIAL Y EVALUACIÓN DEL ENTORNO ORGANIZACIONAL EN LOS CENTROS DE TRABAJO';
+        subtitulo.style.fontSize = '15px';
+        subtitulo.style.color = '#222';
+        subtitulo.style.margin = '0 0 12px 0';
+        subtitulo.style.fontWeight = '500';
+        subtitulo.style.letterSpacing = '0.1px';
+        titleSection.appendChild(subtitulo);
+        tempContainer.appendChild(titleSection);
         // Información del usuario SOLO UNA VEZ
         const infoUsuario = document.createElement('div');
         infoUsuario.style.backgroundColor = '#f8f9fa';
@@ -531,6 +531,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
         titulo.style.fontSize = '26px';
         titulo.style.letterSpacing = '0.5px';
         titleSection.appendChild(titulo);
+        // SUBTÍTULO
+        const subtitulo = document.createElement('div');
+        subtitulo.textContent = 'IDENTIFICACIÓN Y ANÁLISIS DE LOS FACTORES DE RIESGO PSICOSOCIAL Y EVALUACIÓN DEL ENTORNO ORGANIZACIONAL EN LOS CENTROS DE TRABAJO';
+        subtitulo.style.fontSize = '15px';
+        subtitulo.style.color = '#222';
+        subtitulo.style.margin = '0 0 12px 0';
+        subtitulo.style.fontWeight = '500';
+        subtitulo.style.letterSpacing = '0.1px';
+        titleSection.appendChild(subtitulo);
         const fecha = document.createElement('p');
         fecha.textContent = `Fecha: ${new Date().toLocaleDateString()}`;
         fecha.style.fontSize = '14px';

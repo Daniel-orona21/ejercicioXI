@@ -1,0 +1,196 @@
+.usuarios-container {
+  padding: 1.5rem;
+  background: transparent;
+  min-height: auto;
+  
+  .page-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #3f51b5;
+    margin-bottom: 1rem;
+    text-align: left;
+    letter-spacing: -1px;
+  }
+  
+  .usuarios-content {
+    max-width: none;
+    margin: 0 auto;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 4px 32px rgba(60, 72, 88, 0.10), 0 1.5px 6px rgba(60, 72, 88, 0.08);
+    padding: 2.5rem 2.5rem 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .usuarios-list {
+    .usuarios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+      }
+      
+      .btn-add {
+        background: #3f51b5;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.2s;
+        
+        &:hover {
+          background: #303f9f;
+        }
+        
+        i {
+          font-size: 0.875rem;
+        }
+      }
+    }
+    
+    .table-container {
+      overflow-x: auto;
+    }
+    
+    .usuarios-table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th, td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+      
+      th {
+        font-weight: 600;
+        color: #666;
+        background: #f8f9fa;
+      }
+      
+      td {
+        color: #333;
+      }
+      
+      .badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        
+        &.badge-admin {
+          background: #e3f2fd;
+          color: #1976d2;
+        }
+        
+        &.badge-user {
+          background: #e8f5e9;
+          color: #388e3c;
+        }
+      }
+      
+      .btn-action {
+        background: none;
+        border: none;
+        color: #666;
+        cursor: pointer;
+        padding: 0.5rem;
+        margin-right: 0.5rem;
+        transition: color 0.2s;
+        
+        &:hover {
+          color: #3f51b5;
+        }
+        
+        i {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+  
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    
+    label {
+      font-weight: 600;
+      color: #3f51b5;
+      font-size: 1.08rem;
+      margin-bottom: 0.2rem;
+      letter-spacing: -0.5px;
+    }
+    
+    input, select {
+      padding: 0.95rem 1.1rem;
+      border: 1.5px solid #e3e8ee;
+      border-radius: 8px;
+      background: #f7fafd;
+      font-size: 1.08rem;
+      color: #222;
+      transition: border 0.2s, box-shadow 0.2s;
+      outline: none;
+      box-shadow: none;
+      margin-top: 0.1rem;
+    }
+    input:focus, select:focus {
+      border: 1.5px solid #3f51b5;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(63, 81, 181, 0.07);
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+  }
+  
+  .btn-submit {
+    background: linear-gradient(90deg, #3f51b5 60%, #5c6bc0 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(60, 72, 88, 0.10);
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    letter-spacing: 0.5px;
+  }
+  .btn-submit:hover {
+    background: linear-gradient(90deg, #303f9f 60%, #3949ab 100%);
+    box-shadow: 0 4px 16px rgba(60, 72, 88, 0.13);
+    transform: translateY(-2px) scale(1.03);
+  }
+}
+
+@media (max-width: 700px) {
+  .usuarios-container .usuarios-content {
+    padding: 1.5rem 0.7rem 1.2rem 0.7rem;
+  }
+} 

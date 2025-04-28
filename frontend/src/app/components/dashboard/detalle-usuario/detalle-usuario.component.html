@@ -5,18 +5,12 @@
     <p>Cargando datos del usuario...</p>
   </div>
 
-  <!-- Mensaje de error -->
-  <div class="error-message" *ngIf="error">
-    <p>{{ error }}</p>
-    <button [routerLink]="['/dashboard/resultados']">Volver a la lista</button>
-  </div>
-
   <!-- Contenido principal - Detalle de usuario -->
   <div class="usuario-detalle" *ngIf="!cargando && !error && detalleUsuario">
     <!-- Encabezado con información básica del usuario -->
     <div class="usuario-header">
       <div class="volver-btn">
-        <button [routerLink]="['/dashboard/resultados']">← Volver a la lista</button>
+        <button *ngIf="usuarioActual?.rol === 'admin'" [routerLink]="['/dashboard/resultados']">← Volver a la lista</button>
       </div>
       <h2>Detalle de usuario</h2>
       <div class="usuario-info">
@@ -145,4 +139,22 @@
       </div>
     </div>
   </div>
+
+  <ng-container *ngIf="detalleUsuario && detalleUsuario.respuestas && detalleUsuario.respuestas.length > 0; else noEvaluacion">
+  </ng-container>
+
+  <ng-template #noEvaluacion>
+    <div class="no-evaluacion-card">
+      <div class="icon-container">
+        <i class="fas fa-clipboard-list"></i>
+      </div>
+      <h2 class="no-evaluacion-title">Aún no has realizado la evaluación</h2>
+      <p class="no-evaluacion-text">
+        Para ver tus resultados primero debes completar el cuestionario de factores de riesgo psicosocial.
+      </p>
+      <button class="btn-ir-cuestionario" (click)="irACuestionario()">
+        <i class="fas fa-edit"></i> Ir a cuestionario
+      </button>
+    </div>
+  </ng-template>
 </div> 
